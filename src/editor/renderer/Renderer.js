@@ -44,7 +44,7 @@ class UnlitRenderMode extends RenderMode {
       editor.selectedTransformRoots,
       spokeRenderer
     );
-    this.outlinePass.edgeColor = new Color("#006EFF");
+    this.outlinePass.edgeColor = new Color("#c4005d");
     this.outlinePass.renderToScreen = true;
     this.effectComposer.addPass(this.outlinePass);
     this.enableShadows = false;

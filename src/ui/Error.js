@@ -28,7 +28,6 @@ export default class Error extends Component {
     return (
       <StyledError>
         <Link to="/">
-          <SpokeLogo />
         </Link>
         {this.props.message}
       </StyledError>

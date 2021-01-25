@@ -74,33 +74,19 @@ class NavBar extends Component {
           <nav>
             <NavList>
               <li>
-                <Link to="/whats-new">What&apos;s New</Link>
+                <a href="https://webaverse.com">Webaverse</a>
               </li>
               <li>
-                <a href="https://github.com/mozilla/Spoke" rel="noopener noreferrer">
-                  Source
+                <a href="https://app.webaverse.com/" rel="noopener noreferrer">
+                  Play 
                 </a>
               </li>
-              {configs.isMoz() && (
-                <li>
-                  <a href="https://discord.gg/wHmY4nd" rel="noopener noreferrer">
-                    Community
-                  </a>
-                </li>
-              )}
-              {configs.isMoz() && (
-                <li>
-                  <a href="https://hubs.mozilla.com" rel="noopener noreferrer">
-                    Hubs
-                  </a>
-                </li>
-              )}
             </NavList>
           </nav>
         </MiddleContainer>
         <RightContainer>
           <NavList>
-            {this.props.isAuthenticated ? (
+            {/*this.props.isAuthenticated ? (
               <>
                 <li>
                   <Link to="/projects">Projects</Link>
@@ -113,7 +99,7 @@ class NavBar extends Component {
               <li>
                 <Link to="/login">Login</Link>
               </li>
-            )}
+            )*/}
           </NavList>
         </RightContainer>
       </StyledNavBar>

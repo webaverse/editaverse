@@ -49,7 +49,7 @@ const staticStyle = {
   }),
   option: (base, { isFocused }) => ({
     ...base,
-    backgroundColor: isFocused ? "#006EFF" : "black",
+    backgroundColor: isFocused ? "#c4005d" : "black",
     cursor: "pointer"
   }),
   singleValue: (base, { isDisabled }) => ({
@@ -58,7 +58,7 @@ const staticStyle = {
   }),
   multiValue: (base, { isDisabled }) => ({
     ...base,
-    backgroundColor: isDisabled ? "grey" : "#006EFF"
+    backgroundColor: isDisabled ? "grey" : "#c4005d"
   }),
   multiValueLabel: (base, { isDisabled }) => ({
     ...base,

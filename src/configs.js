@@ -43,8 +43,8 @@ function fixBaseAssetsPath(path) {
 }
 
 configs.isMoz = () => configs.IS_MOZ === "true";
-configs.name = () => (configs.isMoz() ? "Spoke" : "Scene Editor");
-configs.longName = () => (configs.isMoz() ? "Spoke by Mozilla" : "Scene Editor");
+configs.name = () => (configs.isMoz() ? "Webaverse Editor" : "Webaverse Editor");
+configs.longName = () => (configs.isMoz() ? "Webaverse Editor" : "Webaverse Editor");
 configs.icon = () => (configs.isMoz() ? fixBaseAssetsPath(spokeIcon) : fixBaseAssetsPath(editorIcon));
 
 export default configs;

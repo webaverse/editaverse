@@ -18,7 +18,7 @@ const PositionStyles = {
     &:after {
       left: 100%;
       top: 50%;
-      border-left-color: #006eff;
+      border-left-color: #c4005d;
       margin-top: -8px;
     }
   `,
@@ -27,7 +27,7 @@ const PositionStyles = {
     &:after {
       right: 100%;
       top: 50%;
-      border-right-color: #006eff;
+      border-right-color: #c4005d;
       margin-top: -8px;
     }
   `,
@@ -63,7 +63,7 @@ const PositionStyles = {
     &:after {
       bottom: 100%;
       left: 50%;
-      border-bottom-color: #006eff;
+      border-bottom-color: #c4005d;
       margin-left: -8px;
     }
   `,
@@ -72,7 +72,7 @@ const PositionStyles = {
     &:after {
       bottom: 100%;
       left: 0;
-      border-bottom-color: #006eff;
+      border-bottom-color: #c4005d;
       margin-left: 12px;
     }
   `,
@@ -81,7 +81,7 @@ const PositionStyles = {
     &:after {
       bottom: 100%;
       left: 90%;
-      border-bottom-color: #006eff;
+      border-bottom-color: #c4005d;
       margin-left: -8px;
     }
   `
@@ -92,7 +92,7 @@ const Popover = styled.div`
   top: 0;
   left: 0;
   pointer-events: all;
-  background-color: #006eff;
+  background-color: #c4005d;
   border-radius: 4px;
   border-color: #000000;
   border-width: 1px;

@@ -341,20 +341,7 @@ class EditorContainer extends Component {
         name: "File",
         items: [
           {
-            name: "New Project",
-            action: this.onNewProject
-          },
-          {
-            name: "Save Project",
-            hotkey: `${cmdOrCtrlString} + S`,
-            action: this.onSaveProject
-          },
-          {
-            name: "Save As",
-            action: this.onDuplicateProject
-          },
-          {
-            name: configs.isMoz() ? "Publish to Hubs..." : "Publish Scene...",
+            name: configs.isMoz() ? "Publish to Hubs..." : "Publish To Webaverse...",
             action: this.onPublishProject
           },
           {
@@ -392,50 +379,11 @@ class EditorContainer extends Component {
             action: () => window.open("https://github.com/mozilla/Spoke/wiki/Keyboard-and-Mouse-Controls")
           },
           {
-            name: "Get Support",
-            action: () => this.showDialog(SupportDialog)
-          },
-          {
-            name: "Submit Feedback",
-            action: () => window.open("https://forms.gle/2PAFXKwW1SXdfSK17")
-          },
-          {
-            name: "Report an Issue",
-            action: () => window.open("https://github.com/mozilla/Spoke/issues/new")
-          },
-          {
             name: "Join us on Discord",
-            action: () => window.open("https://discord.gg/wHmY4nd")
-          },
-          {
-            name: "Terms of Use",
-            action: () => window.open("https://github.com/mozilla/hubs/blob/master/TERMS.md")
-          },
-          {
-            name: "Privacy Notice",
-            action: () => window.open("https://github.com/mozilla/hubs/blob/master/PRIVACY.md")
+            action: () => window.open("https://discord.gg/R5wqYhvv53")
           }
         ]
       },
-      {
-        name: "Developer",
-        items: [
-          {
-            name: this.state.settingsContext.settings.enableExperimentalFeatures
-              ? "Disable Experimental Features"
-              : "Enable Experimental Features",
-            action: () =>
-              this.updateSetting(
-                "enableExperimentalFeatures",
-                !this.state.settingsContext.settings.enableExperimentalFeatures
-              )
-          }
-        ]
-      },
-      {
-        name: "Submit Feedback",
-        action: () => window.open("https://forms.gle/2PAFXKwW1SXdfSK17")
-      }
     ];
   };
 

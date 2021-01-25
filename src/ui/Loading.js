@@ -26,7 +26,6 @@ export default class Loading extends Component {
   render() {
     return (
       <StyledLoading fullScreen={this.props.fullScreen}>
-        <SpokeLogo />
         {this.props.message}
       </StyledLoading>
     );
