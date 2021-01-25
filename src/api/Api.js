@@ -671,6 +671,8 @@ export default class Project extends EventEmitter {
       }
     }
 
+    console.log("original json", json);
+    console.log("returning modifiedJson", modifiedJson);
     return modifiedJson;
   }
 
