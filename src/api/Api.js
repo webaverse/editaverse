@@ -643,6 +643,16 @@ export default class Project extends EventEmitter {
     return json;
   }
 
+  function validURL(str) {
+    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    return !!pattern.test(str);
+  }
+
   async getScene(sceneId) {
     const headers = {
       "content-type": "application/json"
@@ -654,7 +664,14 @@ export default class Project extends EventEmitter {
 
     const json = await response.json();
 
-    return json.scenes[0];
+    let modifiedJson = json.scenes[0];
+    for (fields in modifiedJson) {
+      if (modifiedJson[fields] && validURL(modifiedJson[fields])) {
+        modifiedJson[fields] = "https://cors-anywhere.herokuapp.com/" + modifiedJson[fields];
+      }
+    }
+
+    return modifiedJson;
   }
 
   getSceneUrl(sceneId) {
