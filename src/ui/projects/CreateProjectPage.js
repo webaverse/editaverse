@@ -127,6 +127,7 @@ export default function CreateProjectPage({ history, location }) {
                   </Button>
                 </ProjectGridHeaderRow>
               </ProjectGridHeader>
+{/*
               <ProjectGridContent>
                 <ScrollToTop />
                 {error && <ErrorMessage>{error.message}</ErrorMessage>}
@@ -149,6 +150,7 @@ export default function CreateProjectPage({ history, location }) {
                   </InfiniteScroll>
                 )}
               </ProjectGridContent>
+*/}
             </ProjectGridContainer>
           </ProjectsContainer>
         </ProjectsSection>
