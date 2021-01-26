@@ -488,7 +488,7 @@ export default class ToolBar extends Component {
           </PublishButton>
         )}
         <PublishButton id="publish-button" onClick={this.props.onPublish}>
-          {configs.isMoz() ? "Publish to Hubs..." : "Publish Scene..."}
+          {configs.isMoz() ? "Publish to Hubs..." : "Publish to Webaverse..."}
         </PublishButton>
         <ContextMenu id="menu">
           {this.props.menu.map(menu => {
