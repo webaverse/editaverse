@@ -700,7 +700,7 @@ class EditorContainer extends Component {
       })
       .then(response => response.json())
       .then(data => {
-        window.location.href = 'https://webaverse.com/preview/' + data.hash + "." + "scene" + "." + "glb";
+        window.location.href = 'https://webaverse.com/bake/' + data.hash + "." + "scene" + "." + "glb";
       });
 
       this.hideDialog();
