@@ -342,7 +342,7 @@ class EditorContainer extends Component {
         items: [
           {
             name: configs.isMoz() ? "Publish to Hubs..." : "Publish To Webaverse...",
-            action: this.onPublishProject
+            action: this.onExportProjectToWebaverse
           },
           {
             name: "Export as binary glTF (.glb) ...",
@@ -656,6 +656,73 @@ class EditorContainer extends Component {
     }
   };
 
+  blobToFile(theBlob, fileName){
+    theBlob.lastModifiedDate = new Date();
+    theBlob.name = fileName;
+    theBlob.webkitRelativePath = fileName;
+    return theBlob;
+  }
+
+  onExportProjectToWebaverse = async () => {
+    const options = await new Promise(resolve => {
+      this.showDialog(ExportProjectDialog, {
+        defaultOptions: Object.assign({}, Editor.DefaultExportOptions),
+        onConfirm: resolve,
+        onCancel: resolve
+      });
+    });
+
+    if (!options) {
+      this.hideDialog();
+      return;
+    }
+
+    const abortController = new AbortController();
+
+    this.showDialog(ProgressDialog, {
+      title: "Exporting Project To Webaverse",
+      message: "Getting project ready for Webaverse...",
+      cancelable: true,
+      onCancel: () => abortController.abort()
+    });
+
+    try {
+      const editor = this.state.editor;
+
+      const { glbBlob } = await editor.exportScene(abortController.signal, options);
+
+      const glbFile = this.blobToFile(glbBlob, "scene.glb")
+
+      let hash;
+      fetch('https://ipfs.exokit.org', {
+        method: 'POST',
+        body: glbFile
+      })
+      .then(response => response.json())
+      .then(data => {
+        window.location.href = 'https://webaverse.com/preview/' + data.hash + "." + "scene" + "." + "glb";
+      });
+
+      this.hideDialog();
+
+      trackEvent("Export Project as glTF");
+    } catch (error) {
+      if (error.aborted) {
+        this.hideDialog();
+        return;
+      }
+
+      console.error(error);
+
+      this.showDialog(ErrorDialog, {
+        title: "Error Exporting Project",
+        message: error.message || "There was an error when exporting the project.",
+        error
+      });
+    }
+  };
+
+
   onExportProject = async () => {
     const options = await new Promise(resolve => {
       this.showDialog(ExportProjectDialog, {
@@ -859,7 +926,7 @@ class EditorContainer extends Component {
                   <ToolBar
                     menu={toolbarMenu}
                     editor={editor}
-                    onPublish={this.onPublishProject}
+                    onPublish={this.onExportProjectToWebaverse}
                     isPublishedScene={isPublishedScene}
                     onOpenScene={this.onOpenScene}
                   />
