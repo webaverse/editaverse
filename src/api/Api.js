@@ -667,7 +667,7 @@ export default class Project extends EventEmitter {
     let modifiedJson = json.scenes[0];
     for (let fields in modifiedJson) {
       if (modifiedJson[fields] && this.validURL(modifiedJson[fields])) {
-        modifiedJson[fields] = "https://cors-anywhere.herokuapp.com/" + modifiedJson[fields];
+        modifiedJson[fields] = "https://cors.editaverse.com/" + modifiedJson[fields];
       }
     }
 
