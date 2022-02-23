@@ -538,7 +538,6 @@ export default class SketchfabSource extends ModelMediaSource {
     ];
 
     this.searchLegalCopy = "Search by Sketchfab";
-    this.privacyPolicyUrl = "https://sketchfab.com/privacy";
     this.transformPivot = TransformPivot.Bottom;
   }
 }

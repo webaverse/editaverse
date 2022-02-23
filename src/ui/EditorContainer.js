@@ -1,45 +1,35 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import configs from "../configs";
-import Modal from "react-modal";
-import { Helmet } from "react-helmet";
 import * as Sentry from "@sentry/browser";
-import styled from "styled-components";
+import PropTypes from "prop-types";
+import React, { Component } from "react";
 import { DndProvider } from "react-dnd";
 import HTML5Backend from "react-dnd-html5-backend";
-
-import { trackEvent } from "../telemetry";
-
-import ToolBar from "./toolbar/ToolBar";
-
-import HierarchyPanelContainer from "./hierarchy/HierarchyPanelContainer";
-import PropertiesPanelContainer from "./properties/PropertiesPanelContainer";
-import ViewportPanelContainer from "./viewport/ViewportPanelContainer";
-
-import { defaultSettings, SettingsContextProvider } from "./contexts/SettingsContext";
-import { EditorContextProvider } from "./contexts/EditorContext";
-import { DialogContextProvider } from "./contexts/DialogContext";
-import { OnboardingContextProvider } from "./contexts/OnboardingContext";
-import { withApi } from "./contexts/ApiContext";
-
+import { Helmet } from "react-helmet";
+import Modal from "react-modal";
+import styled from "styled-components";
 import { createEditor } from "../config";
-
-import ErrorDialog from "./dialogs/ErrorDialog";
-import ProgressDialog from "./dialogs/ProgressDialog";
-import ConfirmDialog from "./dialogs/ConfirmDialog";
-import SaveNewProjectDialog from "./dialogs/SaveNewProjectDialog";
-import ExportProjectDialog from "./dialogs/ExportProjectDialog";
-
-import Onboarding from "./onboarding/Onboarding";
-import SupportDialog from "./dialogs/SupportDialog";
-import { cmdOrCtrlString } from "./utils";
-import BrowserPrompt from "./router/BrowserPrompt";
-import { Resizeable } from "./layout/Resizeable";
-import DragLayer from "./dnd/DragLayer";
+import configs from "../configs";
 import Editor from "../editor/Editor";
-
+import { trackEvent } from "../telemetry";
 import defaultTemplateUrl from "./../assets/templates/crater.spoke";
 import tutorialTemplateUrl from "./../assets/templates/tutorial.spoke";
+import { withApi } from "./contexts/ApiContext";
+import { DialogContextProvider } from "./contexts/DialogContext";
+import { EditorContextProvider } from "./contexts/EditorContext";
+import { OnboardingContextProvider } from "./contexts/OnboardingContext";
+import { defaultSettings, SettingsContextProvider } from "./contexts/SettingsContext";
+import ConfirmDialog from "./dialogs/ConfirmDialog";
+import ErrorDialog from "./dialogs/ErrorDialog";
+import ExportProjectDialog from "./dialogs/ExportProjectDialog";
+import ProgressDialog from "./dialogs/ProgressDialog";
+import SaveNewProjectDialog from "./dialogs/SaveNewProjectDialog";
+import DragLayer from "./dnd/DragLayer";
+import HierarchyPanelContainer from "./hierarchy/HierarchyPanelContainer";
+import { Resizeable } from "./layout/Resizeable";
+import Onboarding from "./onboarding/Onboarding";
+import PropertiesPanelContainer from "./properties/PropertiesPanelContainer";
+import BrowserPrompt from "./router/BrowserPrompt";
+import ToolBar from "./toolbar/ToolBar";
+import ViewportPanelContainer from "./viewport/ViewportPanelContainer";
 
 const StyledEditorContainer = styled.div`
   display: flex;
@@ -341,7 +331,7 @@ class EditorContainer extends Component {
         name: "File",
         items: [
           {
-            name: configs.isMoz() ? "Publish to Hubs..." : "Publish To Webaverse...",
+            name: "Publish To Webaverse...",
             action: this.onExportProjectToWebaverse
           },
           {
@@ -373,17 +363,9 @@ class EditorContainer extends Component {
                 this.props.history.push("/projects/tutorial");
               }
             }
-          },
-          {
-            name: "Keyboard and Mouse Controls",
-            action: () => window.open("https://github.com/mozilla/Spoke/wiki/Keyboard-and-Mouse-Controls")
-          },
-          {
-            name: "Join us on Discord",
-            action: () => window.open("https://discord.gg/R5wqYhvv53")
           }
         ]
-      },
+      }
     ];
   };
 
@@ -656,7 +638,7 @@ class EditorContainer extends Component {
     }
   };
 
-  blobToFile(theBlob, fileName){
+  blobToFile(theBlob, fileName) {
     theBlob.lastModifiedDate = new Date();
     theBlob.name = fileName;
     theBlob.webkitRelativePath = fileName;
@@ -691,17 +673,16 @@ class EditorContainer extends Component {
 
       const { glbBlob } = await editor.exportScene(abortController.signal, options);
 
-      const glbFile = this.blobToFile(glbBlob, "scene.glb")
+      const glbFile = this.blobToFile(glbBlob, "scene.glb");
 
-      let hash;
-      fetch('https://ipfs.exokit.org', {
-        method: 'POST',
+      fetch("https://ipfs.exokit.org", {
+        method: "POST",
         body: glbFile
       })
-      .then(response => response.json())
-      .then(data => {
-        window.location.href = 'https://webaverse.com/bake/' + data.hash + "." + "scene" + "." + "glb";
-      });
+        .then(response => response.json())
+        .then(data => {
+          window.location.href = "https://webaverse.com/bake/" + data.hash + "." + "scene" + "." + "glb";
+        });
 
       this.hideDialog();
 
@@ -721,7 +702,6 @@ class EditorContainer extends Component {
       });
     }
   };
-
 
   onExportProject = async () => {
     const options = await new Promise(resolve => {
@@ -952,7 +932,7 @@ class EditorContainer extends Component {
                     )}
                   </Modal>
                   <Helmet>
-                    <title>{`${this.state.modified ? "*" : ""}${editor.scene.name} | ${configs.longName()}`}</title>
+                    <title>{`${this.state.modified ? "*" : ""}${editor.scene.name} | ${configs.longName}`}</title>
                     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
                   </Helmet>
                   {this.state.modified && (

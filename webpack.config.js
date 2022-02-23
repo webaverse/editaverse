@@ -45,10 +45,6 @@ function createHTTPSConfig() {
               {
                 type: 2,
                 value: "localhost"
-              },
-              {
-                type: 2,
-                value: "hubs.local"
               }
             ]
           }
@@ -67,7 +63,7 @@ function createHTTPSConfig() {
   }
 }
 
-const defaultHostName = "hubs.local";
+const defaultHostName = "localhost";
 const host = process.env.HOST_IP || defaultHostName;
 const port = process.env.HOST_PORT || 9090;
 
@@ -91,7 +87,7 @@ module.exports = env => {
       headers: {
         "Access-Control-Allow-Origin": "*"
       },
-      before: function(app) {
+      before: function (app) {
         // be flexible with people accessing via a local reticulum on another port
         app.use(cors({ origin: /hubs\.local(:\d*)?$/ }));
       }
@@ -226,12 +222,7 @@ module.exports = env => {
       }),
       new CopyWebpackPlugin([
         {
-          from: path.join(
-            __dirname,
-            "src",
-            "assets",
-            process.env.IS_MOZ === "true" ? "favicon-spoke.ico" : "favicon-editor.ico"
-          ),
+          from: path.join(__dirname, "src", "assets", "favicon-editor.ico"),
           to: "assets/images/favicon.ico"
         }
       ]),
@@ -263,9 +254,8 @@ module.exports = env => {
         ROUTER_BASE_PATH: "",
         SENTRY_DSN: null,
         GA_TRACKING_ID: null,
-        IS_MOZ: false,
-        GITHUB_ORG: "mozilla",
-        GITHUB_REPO: "spoke",
+        GITHUB_ORG: "webaverse",
+        GITHUB_REPO: "editaverse",
         GITHUB_PUBLIC_TOKEN: "de8cbfb4cc0281c7b731c891df431016c29b0ace"
       })
     ]

@@ -1,7 +1,6 @@
 import React, { Component, Suspense, lazy } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import PropTypes from "prop-types";
-import configs from "../configs";
 
 import GlobalStyle from "./GlobalStyle";
 
@@ -13,8 +12,6 @@ import { AuthContextProvider } from "./contexts/AuthContext";
 
 import RedirectRoute from "./router/RedirectRoute";
 import { Telemetry } from "../telemetry";
-
-import LandingPage from "./landing/LandingPage";
 import WhatsNewPage from "./whats-new/WhatsNewPage";
 import LoginPage from "./auth/LoginPage";
 import LogoutPage from "./auth/LogoutPage";
@@ -71,8 +68,7 @@ export default class App extends Component {
               <GlobalStyle />
               <Column as={Suspense} fallback={<Loading message="Loading..." fullScreen />}>
                 <Switch>
-                  {configs.isMoz() && <Route path="/" exact component={LandingPage} />}
-                  {!configs.isMoz() && <RedirectRoute path="/" exact to="/projects" />}
+                  <RedirectRoute path="/" exact to="/projects" />
                   <Route path="/whats-new" exact component={WhatsNewPage} />
                   <RedirectRoute path="/new" exact to="/projects" />
                   <Route path="/login" exact component={LoginPage} />

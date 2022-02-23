@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import NavBar from "../navigation/NavBar";
-import Footer from "../navigation/Footer";
 import FileInput from "../inputs/FileInput";
 import ProgressBar from "../inputs/ProgressBar";
 import KitPackager from "../../editor/kits/KitPackager";
@@ -74,7 +73,6 @@ export default function PackageKitPage() {
           )}
         </Container>
       </main>
-      <Footer />
     </>
   );
 }

@@ -12,7 +12,6 @@ import {
   ErrorMessage
 } from "./ProjectGrid";
 import { Button } from "../inputs/Button";
-import Footer from "../navigation/Footer";
 import { MediumButton } from "../inputs/Button";
 import { Link } from "react-router-dom";
 import LatestUpdate from "../whats-new/LatestUpdate";
@@ -154,7 +153,7 @@ class ProjectsPage extends Component {
           {!isAuthenticated || (projects.length === 0 && !loading) ? (
             <ProjectsSection flex={0}>
               <WelcomeContainer>
-                <h1>Welcome{configs.isMoz() ? " to Spoke" : ""}</h1>
+                <h1>Welcome</h1>
                 <h2>
                   If you&#39;re new here we recommend going through the tutorial. Otherwise, jump right in and create a
                   project from scratch or from one of our templates.
@@ -197,7 +196,6 @@ class ProjectsPage extends Component {
           </ProjectsSection>
           <ProjectContextMenu />
         </main>
-        <Footer />
       </>
     );
   }

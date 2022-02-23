@@ -1,30 +1,20 @@
-import React, { useCallback, useState, useContext } from "react";
 import PropTypes from "prop-types";
-import ScrollToTop from "../router/ScrollToTop";
+import React, { useCallback, useState } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "../inputs/Button";
+import PrimaryLink from "../inputs/PrimaryLink";
 import NavBar from "../navigation/NavBar";
 import {
-  ProjectGrid,
+  Filter,
   ProjectGridContainer,
   ProjectGridHeader,
   ProjectGridHeaderRow,
-  Filter,
-  Separator,
   SearchInput,
-  ProjectGridContent,
-  ErrorMessage
+  Separator
 } from "./ProjectGrid";
-import Footer from "../navigation/Footer";
-import PrimaryLink from "../inputs/PrimaryLink";
-import { Button } from "../inputs/Button";
-import { ProjectsSection, ProjectsContainer, ProjectsHeader } from "./ProjectsPage";
-import { ApiContext } from "../contexts/ApiContext";
-import { Link } from "react-router-dom";
-import InfiniteScroll from "react-infinite-scroller";
-import usePaginatedSearch from "./usePaginatedSearch";
+import { ProjectsContainer, ProjectsHeader, ProjectsSection } from "./ProjectsPage";
 
 export default function CreateProjectPage({ history, location }) {
-  const api = useContext(ApiContext);
-
   const queryParams = new URLSearchParams(location.search);
 
   const [params, setParams] = useState({
@@ -79,26 +69,6 @@ export default function CreateProjectPage({ history, location }) {
     });
   }, [updateParams, params]);
 
-  const onSelectScene = useCallback(
-    scene => {
-      const search = new URLSearchParams();
-      search.set("sceneId", scene.id);
-      history.push(`/projects/new?${search}`);
-    },
-    [history]
-  );
-
-  const { loading, error, entries, hasMore, loadMore } = usePaginatedSearch(
-    `${api.apiURL}/api/v1/media/search`,
-    params
-  );
-
-  const filteredEntries = entries.map(result => ({
-    ...result,
-    url: `/projects/new?sceneId=${result.id}`,
-    thumbnail_url: result && result.images && result.images.preview && result.images.preview.url
-  }));
-
   return (
     <>
       <NavBar />
@@ -127,7 +97,7 @@ export default function CreateProjectPage({ history, location }) {
                   </Button>
                 </ProjectGridHeaderRow>
               </ProjectGridHeader>
-{/*
+              {/*
               <ProjectGridContent>
                 <ScrollToTop />
                 {error && <ErrorMessage>{error.message}</ErrorMessage>}
@@ -155,7 +125,6 @@ export default function CreateProjectPage({ history, location }) {
           </ProjectsContainer>
         </ProjectsSection>
       </main>
-      <Footer />
     </>
   );
 }

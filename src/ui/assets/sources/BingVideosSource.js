@@ -6,6 +6,5 @@ export default class BingVideosSource extends VideoMediaSource {
     this.id = "bing_videos";
     this.name = "Bing Videos";
     this.searchLegalCopy = "Search by Bing";
-    this.privacyPolicyUrl = "https://privacy.microsoft.com/en-us/privacystatement";
   }
 }

@@ -102,7 +102,6 @@ export const TransformSpace = {
   World: "World",
   Local: "Local",
   LocalSelection: "LocalSelection" // The local space of the last selected object
-  // TODO: Viewport, Cursor?
 };
 
 let resolveRenderer;
@@ -454,7 +453,6 @@ export default class Editor extends EventEmitter {
     }
 
     // Increment this version when you are making a breaking change.
-    // Document your changes here: https://github.com/mozilla/hubs/wiki/MOZ_hubs_components-Changelog
     json.extensions.MOZ_hubs_components = {
       version: 4
     };
@@ -1086,8 +1084,7 @@ export default class Editor extends EventEmitter {
   reparent(object, newParent, newBefore, useHistory = true, emitEvent = true, selectObject = true) {
     if (!object.parent) {
       throw new Error(
-        `${object.nodeName || object.type} "${
-          object.name
+        `${object.nodeName || object.type} "${object.name
         }" has no parent. Reparent only works on objects that are currently in the scene.`
       );
     }

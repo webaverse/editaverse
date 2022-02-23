@@ -20,7 +20,6 @@ get(configs, "NON_CORS_PROXY_DOMAINS", process.env.NON_CORS_PROXY_DOMAINS);
 get(configs, "SENTRY_DSN", process.env.SENTRY_DSN);
 get(configs, "GA_TRACKING_ID", process.env.GA_TRACKING_ID);
 get(configs, "BASE_ASSETS_PATH", process.env.BASE_ASSETS_PATH);
-get(configs, "IS_MOZ", process.env.IS_MOZ);
 
 if (configs.BASE_ASSETS_PATH) {
   // eslint-disable-next-line no-undef
@@ -42,9 +41,8 @@ function fixBaseAssetsPath(path) {
   return path;
 }
 
-configs.isMoz = () => configs.IS_MOZ === "true";
-configs.name = () => (configs.isMoz() ? "Webaverse Editor" : "Webaverse Editor");
-configs.longName = () => (configs.isMoz() ? "Webaverse Editor" : "Webaverse Editor");
-configs.icon = () => (configs.isMoz() ? fixBaseAssetsPath(spokeIcon) : fixBaseAssetsPath(editorIcon));
+configs.name = "Webaverse Editor";
+configs.longName = "Webaverse Editor";
+configs.icon = () => fixBaseAssetsPath(editorIcon);
 
 export default configs;
