@@ -17,9 +17,9 @@
     "url": "https://github.com/webaverse/editaverse.git"
   },
   "scripts": {
-    "start": "concurrently \"node ./cors-server.js\" \"cross-env NODE_ENV=development webpack-dev-server --mode development\"",
+    "start": "cross-env NODE_ENV=development webpack-dev-server --mode development",
+    "dev": "concurrently \"node ./cors-server.js\" \"cross-env NODE_ENV=development webpack-dev-server --mode development\"",
     "build": "cross-env NODE_ENV=production webpack --mode production",
-    "bundle-analyzer": "cross-env NODE_ENV=production webpack-dev-server --mode=production --env.BUNDLE_ANALYZER",
     "precommit": "lint-staged",
     "lint": "yarn lint:js && yarn lint:css",
     "lint:js": "eslint ./src",
