@@ -290,7 +290,7 @@ export default class Editor extends EventEmitter {
     this.sceneLoading = true;
     this.disableUpdate = true;
     const [scene, errors] = await SceneNode.loadProject(this, projectFile);
-    console.log("errors", errors);
+    if(errors) console.log("errors", errors);
     this.sceneLoading = false;
     this.disableUpdate = false;
     this.scene = scene;
