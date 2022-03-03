@@ -345,6 +345,14 @@ class EditorContainer extends Component {
           {
             name: "Export legacy .spoke project",
             action: this.onExportLegacyProject
+          },
+          {
+            name: "Import .scn project",
+            action: this.onImportSCNProject
+          },
+          {
+            name: "Export .scn project",
+            action: this.onExportSCNProject
           }
         ]
       },
@@ -780,7 +788,6 @@ class EditorContainer extends Component {
         const fileReader = new FileReader();
         fileReader.onload = () => {
           const json = JSON.parse(fileReader.result);
-
           if (json.metadata) {
             delete json.metadata.sceneUrl;
             delete json.metadata.sceneId;
@@ -794,6 +801,46 @@ class EditorContainer extends Component {
     el.click();
 
     trackEvent("Import Legacy Project");
+  };
+
+  onImportSCNProject = async () => {
+    const confirm = await new Promise(resolve => {
+      this.showDialog(ConfirmDialog, {
+        title: "Import Scn Project",
+        message: "Warning! This will overwrite your existing scene! Are you sure you wish to continue?",
+        onConfirm: () => resolve(true),
+        onCancel: () => resolve(false)
+      });
+    });
+
+    this.hideDialog();
+
+    if (!confirm) return;
+
+    const el = document.createElement("input");
+    el.type = "file";
+    el.accept = ".scn";
+    el.style.display = "none";
+    el.onchange = () => {
+      if (el.files.length > 0) {
+        const fileReader = new FileReader();
+        fileReader.onload = () => {
+          const json = JSON.parse(fileReader.result);
+          console.log(json);
+
+          if (json.metadata) {
+            delete json.metadata.sceneUrl;
+            delete json.metadata.sceneId;
+          }
+
+          this.importProject(json);
+        };
+        fileReader.readAsText(el.files[0]);
+      }
+    };
+    el.click();
+
+    trackEvent("Import Scn Project");
   };
 
   onExportLegacyProject = async () => {
@@ -810,6 +857,28 @@ class EditorContainer extends Component {
     const el = document.createElement("a");
     const fileName = this.state.editor.scene.name.toLowerCase().replace(/\s+/g, "-");
     el.download = fileName + ".spoke";
+    el.href = URL.createObjectURL(projectBlob);
+    document.body.appendChild(el);
+    el.click();
+    document.body.removeChild(el);
+
+    trackEvent("Project Exported");
+  };
+
+  onExportSCNProject = async () => {
+    const editor = this.state.editor;
+    const projectFile = editor.scene.serializeScn();
+
+    if (projectFile.metadata) {
+      delete projectFile.metadata.sceneUrl;
+      delete projectFile.metadata.sceneId;
+    }
+
+    const projectJson = JSON.stringify(projectFile);
+    const projectBlob = new Blob([projectJson]);
+    const el = document.createElement("a");
+    const fileName = this.state.editor.scene.name.toLowerCase().replace(/\s+/g, "-");
+    el.download = fileName + ".scn";
     el.href = URL.createObjectURL(projectBlob);
     document.body.appendChild(el);
     el.click();

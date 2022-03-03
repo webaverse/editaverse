@@ -289,9 +289,8 @@ export default class Editor extends EventEmitter {
 
     this.sceneLoading = true;
     this.disableUpdate = true;
-
     const [scene, errors] = await SceneNode.loadProject(this, projectFile);
-
+    console.log("errors", errors);
     this.sceneLoading = false;
     this.disableUpdate = false;
     this.scene = scene;
@@ -304,7 +303,6 @@ export default class Editor extends EventEmitter {
     this.spokeControls.onSceneSet(scene);
 
     this.renderer.onSceneSet();
-
     this.addObject(this.scene);
 
     this.deselectAll();
@@ -1084,7 +1082,8 @@ export default class Editor extends EventEmitter {
   reparent(object, newParent, newBefore, useHistory = true, emitEvent = true, selectObject = true) {
     if (!object.parent) {
       throw new Error(
-        `${object.nodeName || object.type} "${object.name
+        `${object.nodeName || object.type} "${
+          object.name
         }" has no parent. Reparent only works on objects that are currently in the scene.`
       );
     }

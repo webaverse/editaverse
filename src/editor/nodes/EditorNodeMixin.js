@@ -154,6 +154,74 @@ export default function EditorNodeMixin(Object3DClass) {
 
     onRendererChanged() {}
 
+    serializeScn(components) {
+      const entityJson = {
+        name: this.name,
+        components: [
+          {
+            name: "transform",
+            props: {
+              position: {
+                x: this.position.x,
+                y: this.position.y,
+                z: this.position.z
+              },
+              rotation: {
+                x: this.rotation.x,
+                y: this.rotation.y,
+                z: this.rotation.z
+              },
+              scale: {
+                x: this.scale.x,
+                y: this.scale.y,
+                z: this.scale.z
+              }
+            }
+          },
+          {
+            name: "visible",
+            props: {
+              visible: this._visible
+            }
+          },
+          {
+            name: "editor-settings",
+            props: {
+              enabled: this.enabled
+            }
+          }
+        ]
+      };
+
+      if (components) {
+        for (const componentName in components) {
+          if (!Object.prototype.hasOwnProperty.call(components, componentName)) continue;
+
+          const serializedProps = {};
+          const componentProps = components[componentName];
+
+          for (const propName in componentProps) {
+            if (!Object.prototype.hasOwnProperty.call(componentProps, propName)) continue;
+
+            const propValue = componentProps[propName];
+
+            if (propValue instanceof Color) {
+              serializedProps[propName] = serializeColor(propValue);
+            } else {
+              serializedProps[propName] = propValue;
+            }
+          }
+
+          entityJson.components.push({
+            name: componentName,
+            props: serializedProps
+          });
+        }
+      }
+
+      return entityJson;
+    }
+
     serialize(components) {
       const entityJson = {
         name: this.name,
