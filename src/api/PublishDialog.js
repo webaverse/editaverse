@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import configs from "../configs";
 import PreviewDialog from "../ui/dialogs/PreviewDialog";
 import StringInput from "../ui/inputs/StringInput";
 import BooleanInput from "../ui/inputs/BooleanInput";
@@ -51,7 +50,7 @@ export default class PublishDialog extends Component {
     return (
       <PreviewDialog
         imageSrc={screenshotUrl}
-        title={configs.isMoz() ? "Publish to Hubs" : "Publish Scene"}
+        title={"Publish Scene"}
         onConfirm={this.onConfirm}
         onCancel={onCancel}
         confirmLabel="Save and Publish"
@@ -73,15 +72,7 @@ export default class PublishDialog extends Component {
         </FormField>
         <FormField inline>
           <label htmlFor="allowRemixing">
-            Allow{" "}
-            <a
-              href="https://github.com/mozilla/Spoke/blob/master/REMIXING.md"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Remixing
-            </a>
-            &nbsp;with
+            Allow Remixing with
             <br />
             Creative Commons&nbsp;
             <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener noreferrer">
@@ -91,17 +82,7 @@ export default class PublishDialog extends Component {
           <BooleanInput id="allowRemixing" value={allowRemixing} onChange={this.onChangeAllowRemixing} />
         </FormField>
         <FormField inline>
-          <label htmlFor="allowPromotion">
-            Allow {configs.isMoz() ? "Mozilla to " : ""}
-            <a
-              href="https://github.com/mozilla/Spoke/blob/master/PROMOTION.md"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {configs.isMoz() ? "promote" : "promotion"}
-            </a>{" "}
-            {configs.isMoz() ? "" : "of "}my scene
-          </label>
+          <label htmlFor="allowPromotion">Allow promotion of my scene</label>
           <BooleanInput id="allowPromotion" value={allowPromotion} onChange={this.onChangeAllowPromotion} />
         </FormField>
         {contentAttributions && (

@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import { Redirect } from "react-router-dom";
 import { ApiContext } from "../contexts/ApiContext";
 import NavBar from "../navigation/NavBar";
-import Footer from "../navigation/Footer";
 import styled from "styled-components";
 
 const LoginSection = styled.section`
@@ -38,7 +37,6 @@ export default function LoginPage() {
           </LoginContainer>
         </LoginSection>
       </main>
-      <Footer />
     </>
   );
 }

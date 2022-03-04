@@ -482,13 +482,9 @@ export default class ToolBar extends Component {
           )}
         </ToolToggles>
         <Spacer />
-        {this.props.isPublishedScene && (
-          <PublishButton onClick={this.props.onOpenScene}>
-            {configs.isMoz() ? "Open in Hubs" : "Open Scene"}
-          </PublishButton>
-        )}
+        {this.props.isPublishedScene && <PublishButton onClick={this.props.onOpenScene}>Open Scene</PublishButton>}
         <PublishButton id="publish-button" onClick={this.props.onPublish}>
-          {configs.isMoz() ? "Publish to Hubs..." : "Publish to Webaverse..."}
+          Publish to Webaverse...
         </PublishButton>
         <ContextMenu id="menu">
           {this.props.menu.map(menu => {

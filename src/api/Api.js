@@ -13,15 +13,11 @@ import PublishedSceneDialog from "./PublishedSceneDialog";
 import { matchesFileTypes, AudioFileTypes } from "../ui/assets/fileTypes";
 import { RethrownError } from "../editor/utils/errors";
 
-// Media related functions should be kept up to date with Hubs media-utils:
-// https://github.com/mozilla/hubs/blob/master/src/utils/media-utils.js
-
 const resolveUrlCache = new Map();
 const resolveMediaCache = new Map();
 
 const RETICULUM_SERVER = configs.RETICULUM_SERVER || document.location.hostname;
 
-// thanks to https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding
 function b64EncodeUnicode(str) {
   // first we use encodeURIComponent to get percent-encoded UTF-8, then we convert the percent-encodings
   // into raw bytes which can be fed into btoa.
@@ -66,10 +62,6 @@ export const proxiedUrlFor = url => {
 };
 
 export const scaledThumbnailUrlFor = (url, width, height) => {
-  if (configs.RETICULUM_SERVER.includes("hubs.local") && url.includes("hubs.local")) {
-    return url;
-  }
-
   return `https://${configs.THUMBNAIL_SERVER}/thumbnail/${farsparkEncodeUrl(url)}?w=${width}&h=${height}`;
 };
 
@@ -644,12 +636,12 @@ export default class Project extends EventEmitter {
   }
 
   validURL(str) {
-    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+      '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
     return !!pattern.test(str);
   }
 
@@ -675,7 +667,7 @@ export default class Project extends EventEmitter {
   }
 
   getSceneUrl(sceneId) {
-    if (configs.HUBS_SERVER === "localhost:8080" || configs.HUBS_SERVER === "hubs.local:8080") {
+    if (configs.HUBS_SERVER === "localhost:8080") {
       return `https://${configs.HUBS_SERVER}/scene.html?scene_id=${sceneId}`;
     } else {
       return `https://${configs.HUBS_SERVER}/scenes/${sceneId}`;
@@ -973,7 +965,6 @@ export default class Project extends EventEmitter {
   }
 
   async upload(blob, onUploadProgress, signal) {
-    // Use direct upload API, see: https://github.com/mozilla/reticulum/pull/319
     const { phx_host: uploadHost } = await (await this.fetch(`https://${RETICULUM_SERVER}/api/v1/meta`)).json();
     const uploadPort = new URL(`https://${RETICULUM_SERVER}`).port;
 

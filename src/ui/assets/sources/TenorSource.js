@@ -9,7 +9,6 @@ export default class TenorSource extends VideoMediaSource {
     this.name = "Tenor GIFs";
     this.searchPlaceholder = "Search GIFs...";
     this.searchLegalCopy = "Search by Tenor";
-    this.privacyPolicyUrl = "https://tenor.com/legal-privacy";
   }
 
   async search(params, cursor, abortSignal) {

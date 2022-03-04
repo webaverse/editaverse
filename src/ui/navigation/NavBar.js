@@ -67,7 +67,7 @@ class NavBar extends Component {
       <StyledNavBar>
         <IconContainer>
           <Link to="/">
-            <img src={configs.icon()} alt={configs.name()} />
+            <img src={configs.icon()} alt={configs.name} />
           </Link>
         </IconContainer>
         <MiddleContainer>
@@ -78,7 +78,7 @@ class NavBar extends Component {
               </li>
               <li>
                 <a href="https://app.webaverse.com/" rel="noopener noreferrer">
-                  Play 
+                  Play
                 </a>
               </li>
             </NavList>

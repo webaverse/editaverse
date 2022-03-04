@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import configs from "../configs";
 import styled from "styled-components";
 import Input from "../ui/inputs/Input";
 
@@ -55,10 +54,6 @@ const ErrorMessage = styled.p`
   margin-bottom: 20px;
 `;
 
-const LegalText = styled.p`
-  margin-bottom: 20px;
-`;
-
 export default class AuthForm extends Component {
   static propTypes = {
     error: PropTypes.string,
@@ -83,7 +78,7 @@ export default class AuthForm extends Component {
       <StyledAuthForm onSubmit={this.onSubmit}>
         {this.props.error && <ErrorMessage>{this.props.error}</ErrorMessage>}
         <h3>Register or Login</h3>
-        <h4>Login to save projects and publish scenes{configs.isMoz() && " to Hubs"}.</h4>
+        <h4>Login to save projects and publish scenes.</h4>
         <FormInput
           type="email"
           name="email"
@@ -91,17 +86,6 @@ export default class AuthForm extends Component {
           value={this.state.email}
           onChange={this.onEmailChange}
         />
-        <LegalText>
-          By proceeding, you agree to the{" "}
-          <a rel="noopener noreferrer" target="_blank" href="https://github.com/mozilla/hubs/blob/master/TERMS.md">
-            terms of use
-          </a>{" "}
-          and{" "}
-          <a rel="noopener noreferrer" target="_blank" href="https://github.com/mozilla/hubs/blob/master/PRIVACY.md">
-            privacy notice
-          </a>
-          .
-        </LegalText>
         <button type="submit">Send Magic Link</button>
       </StyledAuthForm>
     );

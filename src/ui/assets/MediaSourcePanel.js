@@ -79,7 +79,6 @@ export default function MediaSourcePanel({
           value={params.query}
           onChange={onChangeQuery}
           legal={source.searchLegalCopy}
-          privacyPolicyUrl={source.privacyPolicyUrl}
         />
         {source.upload && (
           <FileInput

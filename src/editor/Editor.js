@@ -102,7 +102,6 @@ export const TransformSpace = {
   World: "World",
   Local: "Local",
   LocalSelection: "LocalSelection" // The local space of the last selected object
-  // TODO: Viewport, Cursor?
 };
 
 let resolveRenderer;
@@ -290,9 +289,8 @@ export default class Editor extends EventEmitter {
 
     this.sceneLoading = true;
     this.disableUpdate = true;
-
     const [scene, errors] = await SceneNode.loadProject(this, projectFile);
-
+    if(errors) console.log("errors", errors);
     this.sceneLoading = false;
     this.disableUpdate = false;
     this.scene = scene;
@@ -305,7 +303,6 @@ export default class Editor extends EventEmitter {
     this.spokeControls.onSceneSet(scene);
 
     this.renderer.onSceneSet();
-
     this.addObject(this.scene);
 
     this.deselectAll();
@@ -454,7 +451,6 @@ export default class Editor extends EventEmitter {
     }
 
     // Increment this version when you are making a breaking change.
-    // Document your changes here: https://github.com/mozilla/hubs/wiki/MOZ_hubs_components-Changelog
     json.extensions.MOZ_hubs_components = {
       version: 4
     };
