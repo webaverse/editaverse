@@ -517,6 +517,38 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
     return sceneJson;
   }
 
+  //pankaj
+  serializeScn() {
+    const sceneJson = {
+      objects: []
+    };
+
+    for (const sibling of this.children) {
+      if (sibling.type === "Model") {
+        const object = {
+          position: [sibling.position.x, sibling.position.y, sibling.position.z],
+          physics: sibling.collidable,
+          quaternion: [sibling.quaternion._x, sibling.quaternion._y, sibling.quaternion._z, sibling.quaternion._w],
+          start_url: sibling._canonicalUrl,
+          dynamic: true
+        };
+        sceneJson.objects.push(object);
+      } else if (sibling.type.includes("Light")) {
+        const object = {
+          type: "application/light",
+          content: {
+            lightType: sibling.name.split(" ")[0].toLowerCase(),
+            args: [[255, 255, 255], 5],
+            position: [sibling.position.x, sibling.position.y, sibling.position.z]
+          }
+        };
+        sceneJson.objects.push(object);
+      }
+    }
+
+    return sceneJson;
+  }
+
   prepareForExport(ctx) {
     this.children = this.children.filter(c => c.isNode);
 

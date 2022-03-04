@@ -51,6 +51,7 @@ import SpotLightNodeEditor from "./ui/properties/SpotLightNodeEditor";
 import TriggerVolumeNodeEditor from "./ui/properties/TriggerVolumeNodeEditor";
 import VideoNodeEditor from "./ui/properties/VideoNodeEditor";
 import WayPointNodeEditor from "./ui/properties/WayPointNodeEditor";
+import ElementsSource from "./ui/assets/sources/ElementsSource";
 
 export function createEditor(api, settings) {
   const editor = new Editor(api, settings);
@@ -80,6 +81,7 @@ export function createEditor(api, settings) {
   editor.registerNode(SimpleWaterNode, SimpleWaterNodeEditor);
   editor.registerNode(ScenePreviewCameraNode, ScenePreviewCameraNodeEditor);
   editor.registerNode(MediaFrameNode, MediaFrameNodeEditor);
+  editor.registerSource(new ElementsSource(editor));
   editor.registerSource(new MyAssetsSource(editor));
   editor.registerSource(new SketchfabSource(api));
 
