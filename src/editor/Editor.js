@@ -279,7 +279,7 @@ export default class Editor extends EventEmitter {
     this.gltfCache.disposeAndClear();
   }
 
-  async loadProject(projectFile) {
+  async loadProject(projectFile, isScn = false) {
     this.removeListener("objectsChanged", this.onEmitSceneModified);
     this.removeListener("sceneGraphChanged", this.onEmitSceneModified);
 
@@ -289,7 +289,10 @@ export default class Editor extends EventEmitter {
 
     this.sceneLoading = true;
     this.disableUpdate = true;
-    const [scene, errors] = await SceneNode.loadProject(this, projectFile);
+    console.log("projectFile", projectFile);
+    const [scene, errors] = isScn
+      ? await SceneNode.loadProjectScn(this, projectFile)
+      : await SceneNode.loadProject(this, projectFile);
     console.log("errors", errors);
     this.sceneLoading = false;
     this.disableUpdate = false;
