@@ -200,7 +200,6 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
   }
 
   static async loadProject(editor, json) {
-    console.log(json);
     if (!json.version) {
       json = migrateV1ToV2(json);
     }
@@ -483,7 +482,6 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
 
   static async loadProjectScn(editor, scnjson) {
     let json = SceneNode.scnToSpokeJson(scnjson);
-    console.log("json", json);
     if (!json.version) {
       json = migrateV1ToV2(json);
     }
