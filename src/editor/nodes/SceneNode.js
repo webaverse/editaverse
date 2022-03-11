@@ -445,7 +445,7 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
               {
                 name: "gltf-model",
                 props: {
-                  src: item.start_url,
+                  src: item.start_url.replace("http://localhost:8081/", ""),
                   attribution: null
                 }
               },
@@ -864,7 +864,7 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
           position: [sibling.position.x, sibling.position.y, sibling.position.z],
           physics: sibling.collidable,
           quaternion: [sibling.quaternion._x, sibling.quaternion._y, sibling.quaternion._z, sibling.quaternion._w],
-          start_url: sibling._canonicalUrl,
+          start_url: `http://localhost:8081/${sibling._canonicalUrl}`,
           dynamic: true,
           content: {
             name: sibling.name,
