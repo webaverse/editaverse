@@ -445,7 +445,8 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
               {
                 name: "gltf-model",
                 props: {
-                  src: item.start_url.replace("http://localhost:8081/", ""),
+                  // src: item.start_url.replace("http://localhost:8081/", ""),
+                  src: item.start_url,
                   attribution: null
                 }
               },
@@ -864,7 +865,7 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
           position: [sibling.position.x, sibling.position.y, sibling.position.z],
           physics: sibling.collidable,
           quaternion: [sibling.quaternion._x, sibling.quaternion._y, sibling.quaternion._z, sibling.quaternion._w],
-          start_url: `http://localhost:8081/${sibling._canonicalUrl}`,
+          start_url: `${sibling._canonicalUrl}`,
           dynamic: true,
           content: {
             name: sibling.name,
@@ -873,17 +874,30 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
         };
         sceneJson.objects.push(object);
       } else if (sibling.type.includes("Light")) {
-        const object = {
-          type: "application/light",
-          content: {
-            name: sibling.name,
-            lightType: sibling.name.split(" ")[0].toLowerCase(),
-            args: [[255, 255, 255], 5],
-            position: [sibling.position.x, sibling.position.y, sibling.position.z],
-            color: sibling.color,
-            uuid: sibling.uuid
-          }
-        };
+        let object;
+        if (sibling.type === "HemisphereLight") {
+          object = {
+            type: "application/light",
+            content: {
+              lightType: sibling.name.split(" ")[0].toLowerCase(),
+              args: [[255, 255, 255], 0.5],
+              name: sibling.name,
+              uuid: sibling.uuid
+            }
+          };
+        } else {
+          object = {
+            type: "application/light",
+            content: {
+              lightType: sibling.name.split(" ")[0].toLowerCase(),
+              args: [[255, 255, 255], 5],
+              name: sibling.name,
+              position: [sibling.position.x, sibling.position.y, sibling.position.z],
+              color: sibling.color,
+              uuid: sibling.uuid
+            }
+          };
+        }
         sceneJson.objects.push(object);
       }
     }
