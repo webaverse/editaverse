@@ -132,9 +132,9 @@ function ViewportToolbar({ onToggleStats, showStats }) {
 
   const options = renderer
     ? renderer.renderModes.map(mode => ({
-        label: mode.name,
-        value: mode
-      }))
+      label: mode.name,
+      value: mode
+    }))
     : [];
 
   useEffect(() => {

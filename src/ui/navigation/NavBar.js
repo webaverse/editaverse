@@ -61,8 +61,12 @@ class NavBar extends Component {
   static propTypes = {
     isAuthenticated: PropTypes.bool.isRequired
   };
+  componentWillMount() {
+    console.log(this.props.isAuthenticated)
+  }
 
   render() {
+
     return (
       <StyledNavBar>
         <IconContainer>
@@ -86,7 +90,7 @@ class NavBar extends Component {
         </MiddleContainer>
         <RightContainer>
           <NavList>
-            {/*this.props.isAuthenticated ? (
+            {this.props.isAuthenticated ? (
               <>
                 <li>
                   <Link to="/projects">Projects</Link>
@@ -99,7 +103,8 @@ class NavBar extends Component {
               <li>
                 <Link to="/login">Login</Link>
               </li>
-            )*/}
+            )
+            }
           </NavList>
         </RightContainer>
       </StyledNavBar>

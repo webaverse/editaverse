@@ -113,6 +113,7 @@ export default function AssetsPanel() {
 
   const savedState = savedSourceState[selectedSource.id] || {};
 
+  console.log(sources)
   return (
     <AssetsPanelContainer id="assets-panel">
       <AssetsPanelColumn flex>
@@ -123,6 +124,9 @@ export default function AssetsPanel() {
               {source.name}
             </ListItem>
           ))}
+          <ListItem onClick={() => setSelectedSource("My Inventory")} selected={selectedSource === "My Inventory"}>
+            My Inventory
+          </ListItem>
         </List>
       </AssetsPanelColumn>
       <Column flex>
@@ -135,6 +139,10 @@ export default function AssetsPanel() {
             setSavedState={setSavedState}
           />
         )}
+        {
+          selectedSource === "My Inventory" && <div> Login </div>
+        }
+
       </Column>
       <AssetDropZone />
     </AssetsPanelContainer>
