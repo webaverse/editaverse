@@ -6,7 +6,6 @@ import { List, ListItem } from "../layout/List";
 import { EditorContext } from "../contexts/EditorContext";
 import AssetDropZone from "./AssetDropZone";
 import { Button } from "../inputs/Button";
-import { Link } from "react-router-dom";
 import LoginDialog from "../../api/LoginDialog";
 import { DialogContext } from "../contexts/DialogContext";
 
