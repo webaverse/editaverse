@@ -374,6 +374,7 @@ export default class ToolBar extends Component {
       rotationSnap
     } = this.props.editor.spokeControls;
 
+    console.log(this.props)
     return (
       <StyledToolbar>
         <ToolButtons>
@@ -483,9 +484,18 @@ export default class ToolBar extends Component {
         </ToolToggles>
         <Spacer />
         {this.props.isPublishedScene && <PublishButton onClick={this.props.onOpenScene}>Open Scene</PublishButton>}
-        <PublishButton id="publish-button" onClick={this.props.onPublish}>
-          Publish to Webaverse...
-        </PublishButton>
+
+        {
+          !this.props.isPublishedScene ?
+            <PublishButton id="publish-button" onClick={this.props.onPublish}>
+              Publish to Webaverse...
+            </PublishButton>
+            :
+            <PublishButton id="publish-button" onClick={this.props.onPublish}>
+              Save Scene
+            </PublishButton>
+
+        }
         <ContextMenu id="menu">
           {this.props.menu.map(menu => {
             return this.renderMenu(menu);

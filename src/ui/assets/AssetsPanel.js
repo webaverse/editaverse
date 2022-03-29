@@ -5,6 +5,13 @@ import { Column, Row } from "../layout/Flex";
 import { List, ListItem } from "../layout/List";
 import { EditorContext } from "../contexts/EditorContext";
 import AssetDropZone from "./AssetDropZone";
+import { Button } from "../inputs/Button";
+import { Link } from "react-router-dom";
+import LoginDialog from "../../api/LoginDialog";
+import { DialogContext } from "../contexts/DialogContext";
+
+
+
 
 const AssetsPanelContainer = styled(Row)`
   position: relative;
@@ -55,14 +62,25 @@ export const AssetPanelContentContainer = styled(Row)`
   overflow: hidden;
 `;
 
+const LoginContainer = styled.div`
+   margin: auto;
+   width: 20%
+`
+
+const LoginButton = styled(Button)`
+  padding: 0 2em;
+`
+
 function getSources(editor) {
-  const isAuthenticated = editor.api.isAuthenticated();
-  return editor.sources.filter(source => !source.requiresAuthentication || isAuthenticated);
+  // const isAuthenticated = editor.api.isAuthenticated();
+  return editor.sources
+  // .filter(source => !source.requiresAuthentication || isAuthenticated);
 }
 
 export default function AssetsPanel() {
   const editor = useContext(EditorContext);
-
+  const { showDialog, hideDialog } = useContext(DialogContext);
+  const isAuthenticated = editor.api.isAuthenticated();
   const [sources, setSources] = useState(
     getSources(editor).filter(source => !source.experimental || editor.settings.enableExperimentalFeatures)
   );
@@ -111,9 +129,21 @@ export default function AssetsPanel() {
     [selectedSource, setSavedSourceState, savedSourceState]
   );
 
-  const savedState = savedSourceState[selectedSource.id] || {};
+  const onLogin = async () => {
+    const loggedIn = await new Promise(resolve => {
+      showDialog(LoginDialog, {
+        onSuccess: () => resolve(true),
+        onCancel: () => resolve(false)
+      });
+    });
 
-  console.log(sources)
+    if (!loggedIn) {
+      hideDialog();
+      return null;
+    }
+  }
+
+  const savedState = savedSourceState[selectedSource.id] || {};
   return (
     <AssetsPanelContainer id="assets-panel">
       <AssetsPanelColumn flex>
@@ -124,13 +154,10 @@ export default function AssetsPanel() {
               {source.name}
             </ListItem>
           ))}
-          <ListItem onClick={() => setSelectedSource("My Inventory")} selected={selectedSource === "My Inventory"}>
-            My Inventory
-          </ListItem>
         </List>
       </AssetsPanelColumn>
       <Column flex>
-        {SourceComponent && (
+        {(SourceComponent && (!selectedSource.requiresAuthentication || isAuthenticated)) ? (
           <SourceComponent
             key={selectedSource.id}
             source={selectedSource}
@@ -138,11 +165,9 @@ export default function AssetsPanel() {
             savedState={savedState}
             setSavedState={setSavedState}
           />
-        )}
-        {
-          selectedSource === "My Inventory" && <div> Login </div>
+        ) :
+          <LoginContainer><LoginButton onClick={() => onLogin()}> Login</LoginButton></LoginContainer>
         }
-
       </Column>
       <AssetDropZone />
     </AssetsPanelContainer>
