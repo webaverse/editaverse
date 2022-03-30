@@ -23,6 +23,7 @@ import { InfoTooltip } from "../layout/Tooltip";
 import { Pause } from "styled-icons/fa-solid";
 import { DialogContext } from "../contexts/DialogContext";
 import LoginDialog from "../../api/LoginDialog";
+import LoginWithMeta from "../../api/LoginWithMeta";
 
 
 
@@ -365,13 +366,11 @@ export default class ToolBar extends Component {
 
   onLogin = async () => {
     const loggedIn = await new Promise(resolve => {
-      this.context.showDialog(LoginDialog, {
+      this.context.showDialog(LoginWithMeta, {
         onSuccess: () => resolve(true),
         onCancel: () => resolve(false)
       });
     });
-
-
     if (!loggedIn) {
       this.context.hideDialog();
       return null;
@@ -381,7 +380,6 @@ export default class ToolBar extends Component {
 
   render() {
     const { editorInitialized, menuOpen } = this.state;
-
     if (!editorInitialized) {
       return <StyledToolbar />;
     }
@@ -394,9 +392,6 @@ export default class ToolBar extends Component {
       translationSnap,
       rotationSnap
     } = this.props.editor.spokeControls;
-
-
-
     return (
       <StyledToolbar>
         <ToolButtons>
@@ -509,7 +504,6 @@ export default class ToolBar extends Component {
           this.props.editor.api.isAuthenticated() ?
             (<>
               {this.props.isPublishedScene && <PublishButton onClick={this.props.onOpenScene}>Open Scene</PublishButton>}
-
               {
                 !this.props.isPublishedScene ?
                   <PublishButton id="publish-button" onClick={this.props.onPublish}>
@@ -519,12 +513,10 @@ export default class ToolBar extends Component {
                   <PublishButton id="publish-button" onClick={this.props.onPublish}>
                     Save Scene
                   </PublishButton>
-
               }
             </>) :
             <PublishButton onClick={() => this.onLogin()}>Login</PublishButton>
         }
-
         <ContextMenu id="menu">
           {this.props.menu.map(menu => {
             return this.renderMenu(menu);

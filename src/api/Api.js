@@ -143,8 +143,9 @@ export default class Project extends EventEmitter {
     const value = localStorage.getItem(LOCAL_STORE_KEY);
 
     const store = JSON.parse(value);
-
-    return !!(store && store.credentials && store.credentials.token);
+    const connectedAddress = window.ethereum.selectedAddress;
+    // return !!(store && store.credentials && store.credentials.token);
+    return !!connectedAddress;
   }
 
   getToken() {
