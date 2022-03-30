@@ -256,7 +256,8 @@ module.exports = env => {
         GA_TRACKING_ID: null,
         GITHUB_ORG: "webaverse",
         GITHUB_REPO: "editaverse",
-        GITHUB_PUBLIC_TOKEN: "de8cbfb4cc0281c7b731c891df431016c29b0ace"
+        GITHUB_PUBLIC_TOKEN: "de8cbfb4cc0281c7b731c891df431016c29b0ace",
+        DISCORD_CLIENT_ID: ""
       })
     ]
   };
