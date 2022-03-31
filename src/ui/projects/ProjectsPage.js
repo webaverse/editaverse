@@ -81,16 +81,18 @@ class ProjectsPage extends Component {
     super(props);
 
     const isAuthenticated = this.props.api.isAuthenticated();
+    const user = this.props.api.getAuth();
 
     this.state = {
       projects: [],
       loading: isAuthenticated,
       isAuthenticated,
-      error: null
+      error: null,
+      user: user
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     // We dont need to load projects if the user isn't logged in
     if (this.state.isAuthenticated) {
       this.props.api
@@ -115,6 +117,13 @@ class ProjectsPage extends Component {
 
           this.setState({ error, loading: false });
         });
+    }
+
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
+    if (params.code) {
+      const user = await this.props.api.getInfo(params.code)
+      console.log(user)
     }
   }
 
@@ -144,12 +153,6 @@ class ProjectsPage extends Component {
 
     for (let i = 0; i < templates.length && i < 4; i++) {
       topTemplates.push(templates[i]);
-    }
-
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const params = Object.fromEntries(urlSearchParams.entries());
-    if (params.code) {
-      this.props.editor.api.getInfo(params.code);
     }
 
     return (

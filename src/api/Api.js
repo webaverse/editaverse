@@ -142,11 +142,10 @@ export default class Project extends EventEmitter {
 
   isAuthenticated() {
     const value = localStorage.getItem(LOCAL_STORE_KEY);
-
     const store = JSON.parse(value);
     const connectedAddress = window.ethereum.selectedAddress;
     // return !!(store && store.credentials && store.credentials.token);
-    return !!connectedAddress;
+    return !!(connectedAddress || store);
   }
 
   getToken() {
@@ -1207,7 +1206,7 @@ export default class Project extends EventEmitter {
     }
   }
 
-  getUserInfo = async (accessToken) => {
+  getDiscordUserInfo = async (accessToken) => {
     try {
       const response = await axios.get('https://discord.com/api/users/@me', {
         headers: {
@@ -1220,7 +1219,7 @@ export default class Project extends EventEmitter {
     }
   }
 
-  getToken = async (code) => {
+  getDiscordToken = async (code) => {
     try {
       const options = new URLSearchParams({
         client_id: configs.DISCORD_CLIENT_ID,
@@ -1229,8 +1228,10 @@ export default class Project extends EventEmitter {
         grant_type: 'authorization_code',
         redirect_uri: configs.DISCORD_REDIRECT,
         scope: 'identify email guilds',
-      });
+      }).toString();
+      console.log(options)
       const result = await axios.post('https://discord.com/api/oauth2/token', options);
+      console.log(result)
       return result;
     } catch (error) {
       console.log(error);
@@ -1238,9 +1239,28 @@ export default class Project extends EventEmitter {
   }
 
   getInfo = async (code) => {
-    const accessToken = await this.getToken(code);
-    const userInfo = await this.getUserInfo(accessToken);
-    console.log(userInfo);
+    const accessToken = await this.getDiscordToken(code);
+    const userInfo = await this.getDiscordUserInfo(accessToken);
+    console.log(userInfo)
+    localStorage.setItem(LOCAL_STORE_KEY, JSON.stringify(userInfo));
+    return userInfo;
   }
+
+  getAuth() {
+    const value = localStorage.getItem(LOCAL_STORE_KEY);
+
+    if (!value) {
+      console.error("Not authenticated")
+    }
+
+    const store = JSON.parse(value);
+
+    if (!store) {
+      console.error("Not authenticated")
+    }
+
+    return store;
+  }
+
 
 }

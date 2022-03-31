@@ -26,6 +26,7 @@ align-items: center;
 justify-content: center;
 margin-bottom: 1rem
 `
+const LOCAL_STORE_KEY = "___hubs_store";
 
 export default function LoginWithMeta({ onConfirm, onCancel, onSuccess, ...props }) {
     const [address, setAddress] = useState(false);
@@ -38,6 +39,7 @@ export default function LoginWithMeta({ onConfirm, onCancel, onSuccess, ...props
             const [address] = await window.ethereum.request({
                 method: 'eth_requestAccounts',
             });
+            localStorage.setItem(LOCAL_STORE_KEY, JSON.stringify(address));
             return address || null;
         } else {
             return null;
@@ -53,7 +55,6 @@ export default function LoginWithMeta({ onConfirm, onCancel, onSuccess, ...props
                 const addressWallet = await getMainnetAddress();
                 setAddress(addressWallet);
                 setLoginFrom('metamask');
-                setShow(false);
                 setLoginFrom('metamask');
             } catch (err) {
                 console.warn(err);
@@ -63,11 +64,12 @@ export default function LoginWithMeta({ onConfirm, onCancel, onSuccess, ...props
         }
     };
 
-    useEffect(() => {
-        if (address) {
-            onCancel()
-        }
-    }, [address])
+    //Close model automatically 
+    // useEffect(() => {
+    //     if (address && onCancel) {
+    //         onCancel()
+    //     }
+    // }, [address])
 
 
 

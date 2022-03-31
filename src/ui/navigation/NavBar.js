@@ -3,6 +3,8 @@ import configs from "../../configs";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import { withApi } from "../contexts/ApiContext";
+
 
 const StyledNavBar = styled.header`
   position: relative;
@@ -58,10 +60,24 @@ const RightContainer = styled.div`
 
 class NavBar extends Component {
   static propTypes = {
+    api: PropTypes.object.isRequired,
     isAuthenticated: PropTypes.bool.isRequired
   };
+
+  constructor(props) {
+    super(props);
+
+    const isAuthenticated = this.props.api.isAuthenticated();
+    const user = this.props.api.getAuth();
+    this.logout = this.props.api.logout();
+    this.state = {
+      isAuthenticated,
+      user: user
+    };
+  }
+
   componentWillMount() {
-    console.log(this.props.isAuthenticated)
+    console.log(this.state.isAuthenticated)
   }
 
   render() {
@@ -88,13 +104,13 @@ class NavBar extends Component {
         </MiddleContainer>
         <RightContainer>
           <NavList>
-            {this.props.isAuthenticated ? (
+            {this.state.isAuthenticated ? (
               <>
                 <li>
-                  <Link to="/projects">Projects</Link>
+                  {this.state.user && this.state.user}
                 </li>
                 <li>
-                  <Link to="/logout">Logout</Link>
+                  <a href="#" onClick={this.logout()}>Logout</a>
                 </li>
               </>
             ) : (
@@ -110,4 +126,4 @@ class NavBar extends Component {
   }
 }
 
-export default NavBar
+export default withApi(NavBar)

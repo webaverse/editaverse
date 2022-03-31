@@ -1,6 +1,6 @@
 import EditorNodeMixin from "./EditorNodeMixin";
 import SimpleWater from "../objects/SimpleWater";
-import waterNormalsUrl from "three/examples/textures/waternormals.jpg";
+// import waterNormalsUrl from "three/examples/textures/waternormals.jpg";
 import loadTexture from "../utils/loadTexture";
 import { Texture } from "three";
 
@@ -41,9 +41,9 @@ export default class SimpleWaterNode extends EditorNodeMixin(SimpleWater) {
     return node;
   }
 
-  static async load() {
-    waterNormalMap = await loadTexture(waterNormalsUrl);
-  }
+  // static async load() {
+  //   waterNormalMap = await loadTexture(waterNormalsUrl);
+  // }
 
   constructor(editor) {
     if (!waterNormalMap) {
