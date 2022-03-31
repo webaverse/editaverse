@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import configs from "../../configs";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import { withAuth } from "../contexts/AuthContext";
 import styled from "styled-components";
 
 const StyledNavBar = styled.header`
@@ -66,7 +65,6 @@ class NavBar extends Component {
   }
 
   render() {
-
     return (
       <StyledNavBar>
         <IconContainer>
@@ -101,7 +99,7 @@ class NavBar extends Component {
               </>
             ) : (
               <li>
-                <Link to="/login">Login</Link>
+                <a href="/login">Login</a>
               </li>
             )
             }
@@ -112,4 +110,4 @@ class NavBar extends Component {
   }
 }
 
-export default withAuth(NavBar);
+export default NavBar

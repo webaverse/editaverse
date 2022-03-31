@@ -20,7 +20,10 @@ get(configs, "NON_CORS_PROXY_DOMAINS", process.env.NON_CORS_PROXY_DOMAINS);
 get(configs, "SENTRY_DSN", process.env.SENTRY_DSN);
 get(configs, "GA_TRACKING_ID", process.env.GA_TRACKING_ID);
 get(configs, "BASE_ASSETS_PATH", process.env.BASE_ASSETS_PATH);
-get(configs, "DISCORD_CLIENT_ID", process.env.DISCORD_CLIENT_ID)
+get(configs, "DISCORD_CLIENT_ID", process.env.DISCORD_CLIENT_ID);
+get(configs, "DISCORD_CLIENT_SECRET", process.env.DISCORD_CLIENT_SECRET);
+get(configs, "DISCORD_REDIRECT", process.env.DISCORD_REDIRECT);
+get(configs, "DISCORD_AUTHORIZATION_URL", process.env.DISCORD_AUTHORIZATION_URL)
 
 if (configs.BASE_ASSETS_PATH) {
   // eslint-disable-next-line no-undef

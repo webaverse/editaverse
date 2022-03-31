@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import configs from "../../configs";
 import { showMenu, ContextMenu, MenuItem, SubMenu } from "../layout/ContextMenu";
 import ToolButton from "./ToolButton";
 import { Button } from "../inputs/Button";
@@ -22,9 +21,8 @@ import styledTheme from "../theme";
 import { InfoTooltip } from "../layout/Tooltip";
 import { Pause } from "styled-icons/fa-solid";
 import { DialogContext } from "../contexts/DialogContext";
-import LoginDialog from "../../api/LoginDialog";
-import LoginWithMeta from "../../api/LoginWithMeta";
-
+import LoginWithMeta from "../../api/Login";
+import LoginDialog from "../../api/LoginDialog"
 
 
 const StyledToolbar = styled.div`
@@ -366,7 +364,7 @@ export default class ToolBar extends Component {
 
   onLogin = async () => {
     const loggedIn = await new Promise(resolve => {
-      this.context.showDialog(LoginWithMeta, {
+      this.context.showDialog(LoginDialog, {
         onSuccess: () => resolve(true),
         onCancel: () => resolve(false)
       });
@@ -377,13 +375,11 @@ export default class ToolBar extends Component {
     }
   }
 
-
   render() {
     const { editorInitialized, menuOpen } = this.state;
     if (!editorInitialized) {
       return <StyledToolbar />;
     }
-
     const {
       transformMode,
       transformSpace,
@@ -392,6 +388,7 @@ export default class ToolBar extends Component {
       translationSnap,
       rotationSnap
     } = this.props.editor.spokeControls;
+
     return (
       <StyledToolbar>
         <ToolButtons>

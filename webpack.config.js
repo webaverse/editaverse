@@ -257,7 +257,10 @@ module.exports = env => {
         GITHUB_ORG: "webaverse",
         GITHUB_REPO: "editaverse",
         GITHUB_PUBLIC_TOKEN: "de8cbfb4cc0281c7b731c891df431016c29b0ace",
-        DISCORD_CLIENT_ID: ""
+        DISCORD_CLIENT_ID: "",
+        DISCORD_CLIENT_SECRET: "",
+        DISCORD_REDIRECT: "",
+        DISCORD_AUTHORIZATION_URL: ""
       })
     ]
   };

@@ -146,6 +146,12 @@ class ProjectsPage extends Component {
       topTemplates.push(templates[i]);
     }
 
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
+    if (params.code) {
+      this.props.editor.api.getInfo(params.code);
+    }
+
     return (
       <>
         <NavBar />

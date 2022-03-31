@@ -1,12 +1,8 @@
-import React, { Component, useState } from "react";
-import PropTypes from "prop-types";
-import Dialog from "../ui/dialogs/Dialog";
-import AuthContainer from "./AuthContainer";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Metamask from "../assets/metamask.png"
 import Discord from "../assets/discord-dark.png"
 import configs from "../configs";
-
 
 const Container = styled.div`
   display: flex;
@@ -36,7 +32,6 @@ export default function LoginWithMeta({ onConfirm, onCancel, onSuccess, ...props
     const [loggingIn, setLoggingIn] = useState(false);
     const [loginFrom, setLoginFrom] = useState('');
 
-    const discordClientId = process.env.DISCORD_CLIENT_ID
 
     const getMainnetAddress = async () => {
         if (typeof window !== "undefined" && window.ethereum) {
@@ -68,19 +63,18 @@ export default function LoginWithMeta({ onConfirm, onCancel, onSuccess, ...props
         }
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (address) {
             onCancel()
         }
     }, [address])
 
+
+
     return (
-        <Dialog {...props} title="Login" tag="div" onCancel={onCancel}>
-            <Container>
-                <MetaButton primary="#d4055a" onClick={metaMaskLogin}><img src={Metamask} alt="metamask" width="28px" /><span>MetaMask</span></MetaButton>
-                {/* <AuthContainer onSuccess={onSuccess} onChange={this.onChange} /> */}
-                <MetaButton primary="#7289da"> <a href={`https://discord.com/api/oauth2/authorize?client_id=${discordClientId}&redirect_uri=${window.location.origin}%2Flogin&response_type=code&scope=identify`}><img src={Discord} alt="metamask" width="28px" /><span>Discord</span></a></MetaButton>
-            </Container>
-        </Dialog>
+        <Container>
+            <MetaButton primary="#d4055a" onClick={metaMaskLogin}><img src={Metamask} alt="metamask" width="28px" /><span>MetaMask</span></MetaButton>
+            <MetaButton primary="#7289da"> <a href={configs.DISCORD_AUTHORIZATION_URL}><img src={Discord} alt="metamask" width="28px" /><span>Discord</span></a></MetaButton>
+        </Container>
     )
 }
