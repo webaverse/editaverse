@@ -18,6 +18,7 @@ import LatestUpdate from "../whats-new/LatestUpdate";
 import { connectMenu, ContextMenu, MenuItem } from "../layout/ContextMenu";
 import templates from "./templates";
 import styled from "styled-components";
+import { Redirect } from "react-router-dom";
 
 export const ProjectsSection = styled.section`
   padding-bottom: 100px;
@@ -88,7 +89,7 @@ class ProjectsPage extends Component {
       loading: isAuthenticated,
       isAuthenticated,
       error: null,
-      user: user
+      user: user,
     };
   }
 
@@ -121,11 +122,12 @@ class ProjectsPage extends Component {
 
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
-    if (params.code) {
-      const user = await this.props.api.getInfo(params.code)
+    if (params.code && !this.state.isAuthenticated) {
+      const user = await this.props.api.getInfo(params.code);
       console.log(user)
     }
   }
+
 
   onDeleteProject = project => {
     this.props.api

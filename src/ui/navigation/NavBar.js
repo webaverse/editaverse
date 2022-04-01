@@ -69,7 +69,6 @@ class NavBar extends Component {
 
     const isAuthenticated = this.props.api.isAuthenticated();
     const user = this.props.api.getAuth();
-    this.logout = this.props.api.logout();
     this.state = {
       isAuthenticated,
       user: user
@@ -107,10 +106,10 @@ class NavBar extends Component {
             {this.state.isAuthenticated ? (
               <>
                 <li>
-                  {this.state.user && this.state.user}
+                  {typeof this.state.user === "object" ? this.state.user.username : this.state.user}
                 </li>
                 <li>
-                  <a href="#" onClick={this.logout()}>Logout</a>
+                  <a href="#" onClick={() => this.props.api.logout()}>Logout</a>
                 </li>
               </>
             ) : (

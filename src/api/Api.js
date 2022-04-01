@@ -83,6 +83,7 @@ function guessContentType(url) {
 }
 
 const LOCAL_STORE_KEY = "___hubs_store";
+const LOCAL_ACCESS_TOKEN = "access_token";
 
 export default class Project extends EventEmitter {
   constructor() {
@@ -149,19 +150,19 @@ export default class Project extends EventEmitter {
   }
 
   getToken() {
-    const value = localStorage.getItem(LOCAL_STORE_KEY);
+    const token = localStorage.getItem(LOCAL_ACCESS_TOKEN);
 
-    if (!value) {
+    if (!token) {
       throw new Error("Not authenticated");
     }
 
-    const store = JSON.parse(value);
+    // const store = JSON.parse(value);
 
-    if (!store || !store.credentials || !store.credentials.token) {
-      throw new Error("Not authenticated");
-    }
+    // if (!store || !store.credentials || !store.credentials.token) {
+    //   throw new Error("Not authenticated");
+    // }
 
-    return store.credentials.token;
+    return token;
   }
 
   getAccountId() {
@@ -1220,18 +1221,16 @@ export default class Project extends EventEmitter {
   }
 
   getDiscordToken = async (code) => {
+    const options = new URLSearchParams({
+      client_id: configs.DISCORD_CLIENT_ID,
+      client_secret: configs.DISCORD_CLIENT_SECRET,
+      code,
+      grant_type: 'authorization_code',
+      redirect_uri: configs.DISCORD_REDIRECT,
+      scope: 'identify email guilds',
+    })
     try {
-      const options = new URLSearchParams({
-        client_id: configs.DISCORD_CLIENT_ID,
-        client_secret: configs.DISCORD_CLIENT_SECRET,
-        code,
-        grant_type: 'authorization_code',
-        redirect_uri: configs.DISCORD_REDIRECT,
-        scope: 'identify email guilds',
-      }).toString();
-      console.log(options)
       const result = await axios.post('https://discord.com/api/oauth2/token', options);
-      console.log(result)
       return result;
     } catch (error) {
       console.log(error);
@@ -1240,8 +1239,8 @@ export default class Project extends EventEmitter {
 
   getInfo = async (code) => {
     const accessToken = await this.getDiscordToken(code);
+    localStorage.setItem(LOCAL_ACCESS_TOKEN, JSON.stringify(accessToken.data.access_token))
     const userInfo = await this.getDiscordUserInfo(accessToken);
-    console.log(userInfo)
     localStorage.setItem(LOCAL_STORE_KEY, JSON.stringify(userInfo));
     return userInfo;
   }
@@ -1261,6 +1260,4 @@ export default class Project extends EventEmitter {
 
     return store;
   }
-
-
 }
