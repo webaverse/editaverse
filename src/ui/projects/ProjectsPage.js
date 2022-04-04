@@ -18,7 +18,7 @@ import LatestUpdate from "../whats-new/LatestUpdate";
 import { connectMenu, ContextMenu, MenuItem } from "../layout/ContextMenu";
 import templates from "./templates";
 import styled from "styled-components";
-import { Redirect } from "react-router-dom";
+import { withRouter } from "react-router-dom"
 
 export const ProjectsSection = styled.section`
   padding-bottom: 100px;
@@ -124,7 +124,9 @@ class ProjectsPage extends Component {
     const params = Object.fromEntries(urlSearchParams.entries());
     if (params.code && !this.state.isAuthenticated) {
       const user = await this.props.api.getInfo(params.code);
-      console.log(user)
+      if (user) {
+        this.props.history.push("/projects")
+      }
     }
   }
 
@@ -212,4 +214,4 @@ class ProjectsPage extends Component {
   }
 }
 
-export default withApi(ProjectsPage);
+export default withRouter(withApi(ProjectsPage));

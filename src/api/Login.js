@@ -3,6 +3,8 @@ import styled from "styled-components";
 import Metamask from "../assets/metamask.png"
 import Discord from "../assets/discord-dark.png"
 import configs from "../configs";
+import { withApi } from "../ui/contexts/ApiContext";
+import { useHistory } from "react-router-dom"
 
 const Container = styled.div`
   display: flex;
@@ -26,13 +28,17 @@ align-items: center;
 justify-content: center;
 margin-bottom: 1rem
 `
+
+const LinkA = styled.a`
+text-decoration: none  
+`
 const LOCAL_STORE_KEY = "___hubs_store";
 
-export default function LoginWithMeta({ onConfirm, onCancel, onSuccess, ...props }) {
+const LoginWithMeta = ({ onConfirm, onCancel, onSuccess, ...props }) => {
     const [address, setAddress] = useState(false);
     const [loggingIn, setLoggingIn] = useState(false);
     const [loginFrom, setLoginFrom] = useState('');
-
+    const history = useHistory();
 
     const getMainnetAddress = async () => {
         if (typeof window !== "undefined" && window.ethereum) {
@@ -54,6 +60,7 @@ export default function LoginWithMeta({ onConfirm, onCancel, onSuccess, ...props
             try {
                 const addressWallet = await getMainnetAddress();
                 setAddress(addressWallet);
+                history.push('/projects')
                 setLoginFrom('metamask');
                 setLoginFrom('metamask');
             } catch (err) {
@@ -76,7 +83,10 @@ export default function LoginWithMeta({ onConfirm, onCancel, onSuccess, ...props
     return (
         <Container>
             <MetaButton primary="#d4055a" onClick={metaMaskLogin}><img src={Metamask} alt="metamask" width="28px" /><span>MetaMask</span></MetaButton>
-            <MetaButton primary="#7289da"> <a href={configs.DISCORD_AUTHORIZATION_URL}><img src={Discord} alt="metamask" width="28px" /><span>Discord</span></a></MetaButton>
+            <LinkA href={configs.DISCORD_AUTHORIZATION_URL}><MetaButton primary="#7289da"> <img src={Discord} alt="metamask" width="28px" />Discord</MetaButton></LinkA>
         </Container>
     )
 }
+
+
+export default withApi(LoginWithMeta); 

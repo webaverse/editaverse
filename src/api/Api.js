@@ -113,9 +113,7 @@ export default class Project extends EventEmitter {
     const channel = socket.channel(`auth:${uuid()}`);
 
     const onAbort = () => socket.disconnect();
-
     signal.addEventListener("abort", onAbort);
-
     await new Promise((resolve, reject) =>
       channel
         .join()
@@ -125,7 +123,6 @@ export default class Project extends EventEmitter {
           reject(err);
         })
     );
-
     const authComplete = new Promise(resolve =>
       channel.on("auth_credentials", ({ credentials: token }) => {
         localStorage.setItem(LOCAL_STORE_KEY, JSON.stringify({ credentials: { email, token } }));
@@ -133,7 +130,6 @@ export default class Project extends EventEmitter {
         resolve();
       })
     );
-
     channel.push("auth_request", { email, origin: "spoke" });
 
     signal.removeEventListener("abort", onAbort);

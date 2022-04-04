@@ -58,71 +58,60 @@ const RightContainer = styled.div`
   }
 `;
 
-class NavBar extends Component {
-  static propTypes = {
-    api: PropTypes.object.isRequired,
-    isAuthenticated: PropTypes.bool.isRequired
-  };
+const NavBar = (props) => {
+  const isAuthenticated = props.api.isAuthenticated();
+  const user = props.api.getAuth();
+  const [state, setState] = React.useState({
+    isAuthenticated,
+    user: user
+  })
 
-  constructor(props) {
-    super(props);
+  React.useEffect(() => {
+    console.log(props.api.isAuthenticated())
+  }, [])
 
-    const isAuthenticated = this.props.api.isAuthenticated();
-    const user = this.props.api.getAuth();
-    this.state = {
-      isAuthenticated,
-      user: user
-    };
-  }
-
-  componentWillMount() {
-    console.log(this.state.isAuthenticated)
-  }
-
-  render() {
-    return (
-      <StyledNavBar>
-        <IconContainer>
-          <Link to="/">
-            <img src={configs.icon()} alt={configs.name} />
-          </Link>
-        </IconContainer>
-        <MiddleContainer>
-          <nav>
-            <NavList>
-              <li>
-                <a href="https://webaverse.com">Webaverse</a>
-              </li>
-              <li>
-                <a href="https://app.webaverse.com/" rel="noopener noreferrer">
-                  Play
-                </a>
-              </li>
-            </NavList>
-          </nav>
-        </MiddleContainer>
-        <RightContainer>
+  return (
+    <StyledNavBar>
+      <IconContainer>
+        <Link to="/">
+          <img src={configs.icon()} alt={configs.name} />
+        </Link>
+      </IconContainer>
+      <MiddleContainer>
+        <nav>
           <NavList>
-            {this.state.isAuthenticated ? (
-              <>
-                <li>
-                  {typeof this.state.user === "object" ? this.state.user.username : this.state.user}
-                </li>
-                <li>
-                  <a href="#" onClick={() => this.props.api.logout()}>Logout</a>
-                </li>
-              </>
-            ) : (
-              <li>
-                <a href="/login">Login</a>
-              </li>
-            )
-            }
+            <li>
+              <a href="https://webaverse.com">Webaverse</a>
+            </li>
+            <li>
+              <a href="https://app.webaverse.com/" rel="noopener noreferrer">
+                Play
+              </a>
+            </li>
           </NavList>
-        </RightContainer>
-      </StyledNavBar>
-    );
-  }
+        </nav>
+      </MiddleContainer>
+      <RightContainer>
+        <NavList>
+          {state.isAuthenticated ? (
+            <>
+              <li>
+                {typeof state.user === "object" ? state.user.username : state.user}
+              </li>
+              <li>
+                <a href="#" onClick={() => props.api.logout()}>Logout</a>
+              </li>
+            </>
+          ) : (
+            <li>
+              <a href="/login">Login</a>
+            </li>
+          )
+          }
+        </NavList>
+      </RightContainer>
+    </StyledNavBar>
+  );
 }
 
 export default withApi(NavBar)
