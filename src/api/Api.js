@@ -12,7 +12,6 @@ import { buildAbsoluteURL } from "url-toolkit";
 import PublishedSceneDialog from "./PublishedSceneDialog";
 import { matchesFileTypes, AudioFileTypes } from "../ui/assets/fileTypes";
 import { RethrownError } from "../editor/utils/errors";
-import axios from "axios";
 
 const resolveUrlCache = new Map();
 const resolveMediaCache = new Map();
@@ -1201,44 +1200,6 @@ export default class Project extends EventEmitter {
       }
       throw new RethrownError(`Failed to fetch "${url}"`, error);
     }
-  }
-
-  getDiscordUserInfo = async (accessToken) => {
-    try {
-      const response = await axios.get('https://discord.com/api/users/@me', {
-        headers: {
-          authorization: `${accessToken.data.token_type} ${accessToken.data.access_token}`
-        }
-      });
-      return response.data;
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  getDiscordToken = async (code) => {
-    const options = new URLSearchParams({
-      client_id: configs.DISCORD_CLIENT_ID,
-      client_secret: configs.DISCORD_CLIENT_SECRET,
-      code,
-      grant_type: 'authorization_code',
-      redirect_uri: configs.DISCORD_REDIRECT,
-      scope: 'identify email guilds',
-    })
-    try {
-      const result = await axios.post('https://discord.com/api/oauth2/token', options);
-      return result;
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  getInfo = async (code) => {
-    const accessToken = await this.getDiscordToken(code);
-    localStorage.setItem(LOCAL_ACCESS_TOKEN, JSON.stringify(accessToken.data.access_token))
-    const userInfo = await this.getDiscordUserInfo(accessToken);
-    localStorage.setItem(LOCAL_STORE_KEY, JSON.stringify(userInfo));
-    return userInfo;
   }
 
   getAuth() {

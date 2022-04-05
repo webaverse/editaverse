@@ -5,7 +5,7 @@ import { trackEvent } from "../telemetry";
 
 import AuthEmailSentMessage from "./AuthEmailSentMessage";
 import AuthForm from "./AuthForm";
-import Login from "./Login"
+import Login from "../ui/auth/Login"
 
 class AuthContainer extends Component {
   static propTypes = {

@@ -21,7 +21,7 @@ import styledTheme from "../theme";
 import { InfoTooltip } from "../layout/Tooltip";
 import { Pause } from "styled-icons/fa-solid";
 import { DialogContext } from "../contexts/DialogContext";
-import LoginWithMeta from "../../api/Login";
+import LoginWithMeta from "../auth/Login";
 import LoginDialog from "../../api/LoginDialog"
 
 

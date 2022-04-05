@@ -1,9 +1,10 @@
-import React, { Component } from "react";
+import React, { Component, useContext } from "react";
 import configs from "../../configs";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { withApi } from "../contexts/ApiContext";
+import { GlobalContext } from "../contexts/GlobalState"
 
 
 const StyledNavBar = styled.header`
@@ -59,17 +60,14 @@ const RightContainer = styled.div`
 `;
 
 const NavBar = (props) => {
-  const isAuthenticated = props.api.isAuthenticated();
-  const user = props.api.getAuth();
-  const [state, setState] = React.useState({
-    isAuthenticated,
-    user: user
-  })
+  const { auth, logout } = useContext(GlobalContext)
+
 
   React.useEffect(() => {
     console.log(props.api.isAuthenticated())
   }, [])
 
+  console.log(auth)
   return (
     <StyledNavBar>
       <IconContainer>
@@ -93,13 +91,13 @@ const NavBar = (props) => {
       </MiddleContainer>
       <RightContainer>
         <NavList>
-          {state.isAuthenticated ? (
+          {auth ? (
             <>
               <li>
-                {typeof state.user === "object" ? state.user.username : state.user}
+                {(auth.username) ? auth.username : auth.address}
               </li>
               <li>
-                <a href="#" onClick={() => props.api.logout()}>Logout</a>
+                <a href="#" onClick={() => logout()}>Logout</a>
               </li>
             </>
           ) : (

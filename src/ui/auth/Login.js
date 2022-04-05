@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
-import Metamask from "../assets/metamask.png"
-import Discord from "../assets/discord-dark.png"
-import configs from "../configs";
-import { withApi } from "../ui/contexts/ApiContext";
+import Metamask from "../../assets/metamask.png"
+import Discord from "../../assets/discord-dark.png"
+import configs from "../../configs";
+import { withApi } from "../contexts/ApiContext";
 import { useHistory } from "react-router-dom"
+import { GlobalContext } from "../contexts/GlobalState"
 
 const Container = styled.div`
   display: flex;
@@ -32,42 +33,20 @@ margin-bottom: 1rem
 const LinkA = styled.a`
 text-decoration: none  
 `
-const LOCAL_STORE_KEY = "___hubs_store";
 
 const LoginWithMeta = ({ onConfirm, onCancel, onSuccess, ...props }) => {
-    const [address, setAddress] = useState(false);
     const [loggingIn, setLoggingIn] = useState(false);
-    const [loginFrom, setLoginFrom] = useState('');
     const history = useHistory();
+    const context = useContext(GlobalContext)
 
-    const getMainnetAddress = async () => {
-        if (typeof window !== "undefined" && window.ethereum) {
-            const [address] = await window.ethereum.request({
-                method: 'eth_requestAccounts',
-            });
-            localStorage.setItem(LOCAL_STORE_KEY, JSON.stringify(address));
-            return address || null;
-        } else {
-            return null;
-        }
-    };
 
     const metaMaskLogin = async (event) => {
         event.preventDefault();
         event.stopPropagation();
         if (!loggingIn) {
             setLoggingIn(true);
-            try {
-                const addressWallet = await getMainnetAddress();
-                setAddress(addressWallet);
-                history.push('/projects')
-                setLoginFrom('metamask');
-                setLoginFrom('metamask');
-            } catch (err) {
-                console.warn(err);
-            } finally {
-                setLoggingIn(false);
-            }
+            await context.metaMaskLogin();
+            history.push('/projects')
         }
     };
 
