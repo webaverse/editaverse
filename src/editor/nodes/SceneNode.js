@@ -283,12 +283,18 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
 
   static scnToSpokeJson(json) {
     const { name, root, skyboxId, components } = json.objects[0].content;
+    const secureName = name ? name : "Imported";
+    const secureRoot = root ? root : _Math.generateUUID();
+    const secureSkyBoxId = skyboxId ? skyboxId : _Math.generateUUID();
     const object = {
       version: 5,
-      root: root,
-      metadata: { name },
+      root: secureRoot,
+      metadata: { name: secureName },
       entities: {
-        [skyboxId]: {
+        [secureRoot]: {
+          name: secureName
+        },
+        [secureSkyBoxId]: {
           name: "Skybox",
           components: [
             {
@@ -337,32 +343,36 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
               }
             }
           ],
-          parent: root,
+          parent: secureRoot,
           index: 0
         }
       }
     };
 
-    const tempFogEntity = {
-      [root]: { name, components: [...components] }
-    };
+    if (components) {
+      const tempFogEntity = {
+        [root]: { name, components: [...components] }
+      };
 
-    object.entities = { ...tempFogEntity, ...object.entities };
+      object.entities = { ...tempFogEntity, ...object.entities };
+    }
 
     json.objects.forEach((item, index) => {
       let tmpEntity;
-      if (item.content.uuid && item.type === "application/light") {
+      const itemUuid = item?.content?.uuid ? item.content.uuid : _Math.generateUUID();
+      if (itemUuid && item.type === "application/light") {
+        const itemName = item?.content?.name ? item.content.name : `${item.content.lightType}-light`;
         tmpEntity = {
-          [item.content.uuid]: {
-            name: item.content.name,
+          [itemUuid]: {
+            name: itemName,
             components: [
               {
                 name: "transform",
                 props: {
                   position: {
-                    x: item.content.position[0],
-                    y: item.content.position[1],
-                    z: item.content.position[2]
+                    x: item?.content?.position ? item.content.position[0] : 0,
+                    y: item?.content?.position ? item.content.position[1] : 0,
+                    z: item?.content?.position ? item.content.position[2] : 0
                   },
                   rotation: {
                     x: 0,
@@ -389,7 +399,7 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
                 }
               },
               {
-                name: toKebabCase(item.content.name),
+                name: toKebabCase(itemName),
                 props: {
                   color: item.color ? item.color : "#ffffff",
                   intensity: 1,
@@ -401,22 +411,23 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
                 }
               }
             ],
-            parent: root,
+            parent: secureRoot,
             index: index
           }
         };
-      } else if (item.content.uuid) {
+      } else if (itemUuid && item.type !== "application/spawnpoint" && item.type !== "application/rendersettings") {
+        const itemName = item?.content?.name ? item.content.name : `gltf-model`;
         tmpEntity = {
-          [item.content.uuid]: {
-            name: item.content.name,
+          [itemUuid]: {
+            name: itemName,
             components: [
               {
                 name: "transform",
                 props: {
                   position: {
-                    x: item.position[0],
-                    y: item.position[1],
-                    z: item.position[2]
+                    x: item.position ? item.position[0] : 0,
+                    y: item.position ? item.position[1] : 0,
+                    z: item.position ? item.position[2] : 0
                   },
                   rotation: {
                     x: 0,
@@ -470,7 +481,7 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
                 props: {}
               }
             ],
-            parent: root,
+            parent: secureRoot,
             index: index
           }
         };
