@@ -139,7 +139,7 @@ export default class Project extends EventEmitter {
   isAuthenticated() {
     const value = localStorage.getItem(LOCAL_STORE_KEY);
     const store = JSON.parse(value);
-    const connectedAddress = window.ethereum.selectedAddress;
+    const connectedAddress = window.ethereum ? window.ethereum.selectedAddress : null;
     // return !!(store && store.credentials && store.credentials.token);
     return !!(connectedAddress || store);
   }
