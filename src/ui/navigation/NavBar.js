@@ -1,9 +1,11 @@
-import React, { Component } from "react";
+import React, { Component, useContext } from "react";
 import configs from "../../configs";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import { withAuth } from "../contexts/AuthContext";
 import styled from "styled-components";
+import { withApi } from "../contexts/ApiContext";
+import { GlobalContext } from "../contexts/GlobalState"
+
 
 const StyledNavBar = styled.header`
   position: relative;
@@ -57,54 +59,57 @@ const RightContainer = styled.div`
   }
 `;
 
-class NavBar extends Component {
-  static propTypes = {
-    isAuthenticated: PropTypes.bool.isRequired
-  };
+const NavBar = (props) => {
+  const { auth, logout } = useContext(GlobalContext)
 
-  render() {
-    return (
-      <StyledNavBar>
-        <IconContainer>
-          <Link to="/">
-            <img src={configs.icon()} alt={configs.name} />
-          </Link>
-        </IconContainer>
-        <MiddleContainer>
-          <nav>
-            <NavList>
-              <li>
-                <a href="https://webaverse.com">Webaverse</a>
-              </li>
-              <li>
-                <a href="https://app.webaverse.com/" rel="noopener noreferrer">
-                  Play
-                </a>
-              </li>
-            </NavList>
-          </nav>
-        </MiddleContainer>
-        <RightContainer>
+
+  React.useEffect(() => {
+    console.log(props.api.isAuthenticated())
+  }, [])
+
+  console.log(auth)
+  return (
+    <StyledNavBar>
+      <IconContainer>
+        <Link to="/">
+          <img src={configs.icon()} alt={configs.name} />
+        </Link>
+      </IconContainer>
+      <MiddleContainer>
+        <nav>
           <NavList>
-            {/*this.props.isAuthenticated ? (
-              <>
-                <li>
-                  <Link to="/projects">Projects</Link>
-                </li>
-                <li>
-                  <Link to="/logout">Logout</Link>
-                </li>
-              </>
-            ) : (
-              <li>
-                <Link to="/login">Login</Link>
-              </li>
-            )*/}
+            <li>
+              <a href="https://webaverse.com">Webaverse</a>
+            </li>
+            <li>
+              <a href="https://app.webaverse.com/" rel="noopener noreferrer">
+                Play
+              </a>
+            </li>
           </NavList>
-        </RightContainer>
-      </StyledNavBar>
-    );
-  }
+        </nav>
+      </MiddleContainer>
+      <RightContainer>
+        <NavList>
+          {auth ? (
+            <>
+              <li>
+                {(auth.username) ? auth.username : auth.address}
+              </li>
+              <li>
+                <a href="#" onClick={() => logout()}>Logout</a>
+              </li>
+            </>
+          ) : (
+            <li>
+              <a href="/login">Login</a>
+            </li>
+          )
+          }
+        </NavList>
+      </RightContainer>
+    </StyledNavBar>
+  );
 }
 
-export default withAuth(NavBar);
+export default withApi(NavBar)

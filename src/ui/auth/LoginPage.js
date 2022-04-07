@@ -20,7 +20,6 @@ const LoginContainer = styled.div`
 
 export default function LoginPage() {
   const api = useContext(ApiContext);
-
   if (api.isAuthenticated()) {
     return <Redirect to="/projects" />;
   }

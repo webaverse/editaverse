@@ -5,6 +5,7 @@ import { trackEvent } from "../telemetry";
 
 import AuthEmailSentMessage from "./AuthEmailSentMessage";
 import AuthForm from "./AuthForm";
+import Login from "../ui/auth/Login"
 
 class AuthContainer extends Component {
   static propTypes = {
@@ -85,11 +86,12 @@ class AuthContainer extends Component {
   };
 
   render() {
-    if (this.state.emailSent) {
-      return <AuthEmailSentMessage email={this.state.email} onCancel={this.onCancel} />;
-    }
+    // if (this.state.emailSent) {
+    //   return <AuthEmailSentMessage email={this.state.email} onCancel={this.onCancel} />;
+    // }
 
-    return <AuthForm error={this.state.error} onSubmit={this.onSubmit} />;
+    // return <AuthForm error={this.state.error} onSubmit={this.onSubmit} />;
+    return <Login />
   }
 }
 

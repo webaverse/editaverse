@@ -82,6 +82,7 @@ function guessContentType(url) {
 }
 
 const LOCAL_STORE_KEY = "___hubs_store";
+const LOCAL_ACCESS_TOKEN = "access_token";
 
 export default class Project extends EventEmitter {
   constructor() {
@@ -111,9 +112,7 @@ export default class Project extends EventEmitter {
     const channel = socket.channel(`auth:${uuid()}`);
 
     const onAbort = () => socket.disconnect();
-
     signal.addEventListener("abort", onAbort);
-
     await new Promise((resolve, reject) =>
       channel
         .join()
@@ -123,7 +122,6 @@ export default class Project extends EventEmitter {
           reject(err);
         })
     );
-
     const authComplete = new Promise(resolve =>
       channel.on("auth_credentials", ({ credentials: token }) => {
         localStorage.setItem(LOCAL_STORE_KEY, JSON.stringify({ credentials: { email, token } }));
@@ -131,7 +129,6 @@ export default class Project extends EventEmitter {
         resolve();
       })
     );
-
     channel.push("auth_request", { email, origin: "spoke" });
 
     signal.removeEventListener("abort", onAbort);
@@ -141,26 +138,26 @@ export default class Project extends EventEmitter {
 
   isAuthenticated() {
     const value = localStorage.getItem(LOCAL_STORE_KEY);
-
     const store = JSON.parse(value);
-
-    return !!(store && store.credentials && store.credentials.token);
+    const connectedAddress = window.ethereum ? window.ethereum.selectedAddress : null;
+    // return !!(store && store.credentials && store.credentials.token);
+    return !!(connectedAddress || store);
   }
 
   getToken() {
-    const value = localStorage.getItem(LOCAL_STORE_KEY);
+    const token = localStorage.getItem(LOCAL_ACCESS_TOKEN);
 
-    if (!value) {
+    if (!token) {
       throw new Error("Not authenticated");
     }
 
-    const store = JSON.parse(value);
+    // const store = JSON.parse(value);
 
-    if (!store || !store.credentials || !store.credentials.token) {
-      throw new Error("Not authenticated");
-    }
+    // if (!store || !store.credentials || !store.credentials.token) {
+    //   throw new Error("Not authenticated");
+    // }
 
-    return store.credentials.token;
+    return token;
   }
 
   getAccountId() {
@@ -1203,5 +1200,21 @@ export default class Project extends EventEmitter {
       }
       throw new RethrownError(`Failed to fetch "${url}"`, error);
     }
+  }
+
+  getAuth() {
+    const value = localStorage.getItem(LOCAL_STORE_KEY);
+
+    if (!value) {
+      console.error("Not authenticated")
+    }
+
+    const store = JSON.parse(value);
+
+    if (!store) {
+      console.error("Not authenticated")
+    }
+
+    return store;
   }
 }
