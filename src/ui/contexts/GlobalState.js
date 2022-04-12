@@ -69,6 +69,8 @@ export const GlobalProvider = ({ children }) => {
     const authAction = {
         auth: state.auth,
         metaMaskLogin: async () => {
+
+
             if (typeof window !== "undefined" && window.ethereum) {
                 const [address] = await window.ethereum.request({
                     method: 'eth_requestAccounts',

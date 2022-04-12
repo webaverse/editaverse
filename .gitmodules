@@ -1,0 +1,3 @@
+[submodule "webaverse-blockchain-lib"]
+	path = webaverse-blockchain-lib
+	url = https://github.com/webaverse/webaverse-blockchain-lib.git
