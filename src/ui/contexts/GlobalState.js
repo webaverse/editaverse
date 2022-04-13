@@ -2,6 +2,7 @@ import React, { createContext, useReducer } from "react"
 import AppReducer from "./AppReducer"
 import axios from "axios";
 import configs from "../../configs";
+import { MetamaskManager } from "webaverse-blockchain-lib/dist"
 
 const LOCAL_STORE_KEY = "___hubs_store";
 const LOCAL_ACCESS_TOKEN = "access_token";
@@ -69,20 +70,20 @@ export const GlobalProvider = ({ children }) => {
     const authAction = {
         auth: state.auth,
         metaMaskLogin: async () => {
+            const metamask = new MetamaskManager();
+            try {
+                const signedMessage = await metamask.connect();
+                const jwt = await metamask.login(signedMessage);
 
-
-            if (typeof window !== "undefined" && window.ethereum) {
-                const [address] = await window.ethereum.request({
-                    method: 'eth_requestAccounts',
-                });
-                localStorage.setItem(LOCAL_STORE_KEY, JSON.stringify({ address: address }));
+                localStorage.setItem(LOCAL_STORE_KEY, JSON.stringify({ address: jwt.slice(0, 30) }));
                 dispatch({
                     type: "METAMASK_LOGIN",
                     payload: {
-                        address: address
+                        address: jwt.slice(0, 30)
                     }
                 })
-            } else {
+            } catch (error) {
+                console.error(error.toString())
                 dispatch({
                     type: "LOGIN_ERROR",
                     payload: {
