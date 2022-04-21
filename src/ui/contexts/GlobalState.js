@@ -1,7 +1,6 @@
 import React, { createContext, useReducer } from "react"
 import AppReducer from "./AppReducer"
-import axios from "axios";
-import configs from "../../configs";
+import { MetamaskManager, ProfileManager, DiscordManager } from "webaverse-blockchain-lib/dist"
 
 const LOCAL_STORE_KEY = "___hubs_store";
 const LOCAL_ACCESS_TOKEN = "access_token";
@@ -34,45 +33,20 @@ export const GlobalContext = createContext(initialState);
 export const GlobalProvider = ({ children }) => {
     const [state, dispatch] = useReducer(AppReducer, initialState);
 
-    const getDiscordUserInfo = async (accessToken) => {
-        try {
-            const response = await axios.get('https://discord.com/api/users/@me', {
-                headers: {
-                    authorization: `${accessToken.data.token_type} ${accessToken.data.access_token}`
-                }
-            });
-            return response.data;
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    const getDiscordToken = async (code) => {
-        const options = new URLSearchParams({
-            client_id: configs.DISCORD_CLIENT_ID,
-            client_secret: configs.DISCORD_CLIENT_SECRET,
-            code,
-            grant_type: 'authorization_code',
-            redirect_uri: configs.DISCORD_REDIRECT,
-            scope: 'identify email guilds',
-        })
-        try {
-            const result = await axios.post('https://discord.com/api/oauth2/token', options);
-            return result;
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-
     //Actions
     const authAction = {
         auth: state.auth,
         metaMaskLogin: async () => {
-            if (typeof window !== "undefined" && window.ethereum) {
-                const [address] = await window.ethereum.request({
-                    method: 'eth_requestAccounts',
-                });
+            const metamask = new MetamaskManager();
+            try {
+                const signedMessage = await metamask.connect();
+                const provider = metamask.getProvider();
+                const address = await provider.getSigner().getAddress();
+                const jwt = await metamask.login(signedMessage);
+                const profile = new ProfileManager(provider);
+                const user = await profile.getProfile();
+                console.log(user);
+                localStorage.setItem(LOCAL_ACCESS_TOKEN, JSON.stringify(jwt))
                 localStorage.setItem(LOCAL_STORE_KEY, JSON.stringify({ address: address }));
                 dispatch({
                     type: "METAMASK_LOGIN",
@@ -80,7 +54,8 @@ export const GlobalProvider = ({ children }) => {
                         address: address
                     }
                 })
-            } else {
+            } catch (error) {
+                console.error(error.toString())
                 dispatch({
                     type: "LOGIN_ERROR",
                     payload: {
@@ -90,14 +65,23 @@ export const GlobalProvider = ({ children }) => {
             }
         },
         getInfo: async (code) => {
-            const accessToken = await getDiscordToken(code);
-            localStorage.setItem(LOCAL_ACCESS_TOKEN, JSON.stringify(accessToken.data.access_token))
-            const userInfo = await getDiscordUserInfo(accessToken);
-            localStorage.setItem(LOCAL_STORE_KEY, JSON.stringify(userInfo));
-            dispatch({
-                type: "USER_LOGIN",
-                payload: userInfo
-            })
+            try {
+                const discord = new DiscordManager();
+                const user = await discord.login(code);
+                localStorage.setItem(LOCAL_ACCESS_TOKEN, JSON.stringify(user.accessToken))
+                localStorage.setItem(LOCAL_STORE_KEY, JSON.stringify(user.data));
+                dispatch({
+                    type: "USER_LOGIN",
+                    payload: user.data
+                })
+            } catch (error) {
+                console.error(error);
+                dispatch({
+                    type: "LOGIN_ERROR",
+                    payload: null
+                })
+            }
+
         },
         logout: () => {
             localStorage.removeItem(LOCAL_STORE_KEY);

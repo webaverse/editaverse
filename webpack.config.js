@@ -73,6 +73,11 @@ module.exports = env => {
       entry: ["./src/index.js"]
     },
 
+    resolve: {
+      alias: {
+        'webaverse-blockchain-lib': path.resolve(__dirname, './webaverse-blockchain-lib')
+      }
+    },
     devtool: process.env.NODE_ENV === "production" ? "source-map" : "inline-source-map",
 
     devServer: {
