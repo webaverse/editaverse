@@ -131,7 +131,6 @@ const ProjectsPage = (props) => {
   }, [auth])
 
 
-
   const onDeleteProject = project => {
     api
       .deleteProject(project.project_id)
@@ -157,8 +156,6 @@ const ProjectsPage = (props) => {
   for (let i = 0; i < templates.length && i < 4; i++) {
     topTemplates.push(templates[i]);
   }
-
-  console.log(projects)
 
   return (
     <>

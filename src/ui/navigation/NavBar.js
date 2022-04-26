@@ -1,7 +1,6 @@
 import React, { Component, useContext } from "react";
 import configs from "../../configs";
 import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
 import styled from "styled-components";
 import { withApi } from "../contexts/ApiContext";
 import { GlobalContext } from "../contexts/GlobalState"
@@ -67,7 +66,7 @@ const NavBar = (props) => {
     console.log(props.api.isAuthenticated())
   }, [])
 
-  console.log(auth)
+
   return (
     <StyledNavBar>
       <IconContainer>
@@ -94,7 +93,7 @@ const NavBar = (props) => {
           {auth ? (
             <>
               <li>
-                {(auth.username) ? auth.username : auth.address}
+                {(auth.username) ? auth.username : (auth.address ? auth.address : auth.addr)}
               </li>
               <li>
                 <a href="#" onClick={() => logout()}>Logout</a>

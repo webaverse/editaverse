@@ -82,7 +82,7 @@ export function camelPad(str) {
       .replace(/([a-z\d])([A-Z])/g, "$1 $2")
       // Look for lower-case letters followed by numbers
       .replace(/([a-zA-Z])(\d)/g, "$1 $2")
-      .replace(/^./, function(str) {
+      .replace(/^./, function (str) {
         return str.toUpperCase();
       })
       // Remove any white space left around the word
@@ -96,4 +96,19 @@ export function bytesToSize(bytes) {
   if (bytes == 0) return "0 Byte";
   const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
   return Math.round(bytes / Math.pow(1024, i), 2) + " " + sizes[i];
+}
+
+
+export function parseQuery(queryString) {
+  const query = {};
+  const pairs = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&');
+  for (let i = 0; i < pairs.length; i++) {
+    const pair = pairs[i].split('=');
+    const k = decodeURIComponent(pair[0]);
+    if (k) {
+      const v = decodeURIComponent(pair[1] || '');
+      query[k] = v;
+    }
+  }
+  return query;
 }
