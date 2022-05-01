@@ -21,6 +21,8 @@ Open `https://localhost:9090`
 
 ## What is the goal of the project?
 
+First you should read this if you haven't: https://docs.webaverse.com/
+
 Right now, users can build worlds in Blender and export them to Webaverse. It's fine, but not easy to use for most people who just want a world to play.
 
 Webaverse is an open source 3D world platform where users can play and interact with their avatars and voice chat. Naturally, we need an easy way for users to quickly build and edit worlds without having to know any complicated 3D software, and ideally right in the browser without having to download anything.
@@ -39,6 +41,13 @@ Luckily the creator of Spoke wanted things to be exstensible, so he kept (nearly
 Ideally this project grows to be a smooth 3D editor experience that is integrated with Webaverse entirely, and doesn't have any differentiation. We may even migrate the project into the core app repo so that it can easily be switched into from the UI.
 
 However, we're not there yet. Right now we want to make sure that it serves the utility as a viable place option for users to edit and create scenes easily and hang out in them in Webaverse.
+
+### .scn / .metaversefile support
+We should be done with this but need to test this and make sure it's all good. User can export a .scn file and import it into Webaverse. .metaversefile is a subset file for Webaverse projects and shouldn't be necessary but should be read into and considered
+https://docs.webaverse.com/docs/create/scenes
+
+### Physics baking for scene
+We want to take any collision meshes that may have been set in the scene, any colliders that may have come from the upload, etc and bake Physics down. There is a bake physx function in the backend of Webaverse that we can access to do this.
 
 ### Remove Reticulum and replace with Webaverse APIs
 We don't want to use Reticulum at all. If Webaverse doesn't have the APIs we should add. Most likely for scene editing CRUD we want to create or update the metadata on NFTs. NFTs can contain entire JSON files, zip files or worlds.
