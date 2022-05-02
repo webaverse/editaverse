@@ -41,7 +41,9 @@ const theme = {
   white: "#fff",
   shadow15: "0px 4px 4px  rgba(0, 0, 0, 0.15)",
   shadow30: "0px 4px 4px  rgba(0, 0, 0, 0.3)",
-  borderStyle: "1px solid #5D646C"
+  borderStyle: "1px solid #5D646C",
+  darkGrey: "#a9a9a9",
+  slateGrey: "#708090"
 };
 
 theme.chartColors = [

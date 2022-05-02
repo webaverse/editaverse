@@ -21,9 +21,7 @@ import styledTheme from "../theme";
 import { InfoTooltip } from "../layout/Tooltip";
 import { Pause } from "styled-icons/fa-solid";
 import { DialogContext } from "../contexts/DialogContext";
-import LoginWithMeta from "../auth/Login";
-import LoginDialog from "../../api/LoginDialog"
-
+import LoginDialog from "../../api/LoginDialog";
 
 const StyledToolbar = styled.div`
   display: flex;
@@ -210,6 +208,7 @@ const transformSpaceOptions = [
 
 export default class ToolBar extends Component {
   static contextType = DialogContext;
+
   static propTypes = {
     menu: PropTypes.array,
     editor: PropTypes.object,
@@ -373,7 +372,7 @@ export default class ToolBar extends Component {
       this.context.hideDialog();
       return null;
     }
-  }
+  };
 
   render() {
     const { editorInitialized, menuOpen } = this.state;
@@ -497,23 +496,22 @@ export default class ToolBar extends Component {
           )}
         </ToolToggles>
         <Spacer />
-        {
-          this.props.editor.api.isAuthenticated() ?
-            (<>
-              {this.props.isPublishedScene && <PublishButton onClick={this.props.onOpenScene}>Open Scene</PublishButton>}
-              {
-                !this.props.isPublishedScene ?
-                  <PublishButton id="publish-button" onClick={this.props.onPublish}>
-                    Publish to Webaverse...
-                  </PublishButton>
-                  :
-                  <PublishButton id="publish-button" onClick={this.props.onPublish}>
-                    Save Scene
-                  </PublishButton>
-              }
-            </>) :
-            <PublishButton onClick={() => this.onLogin()}>Login</PublishButton>
-        }
+        {this.props.editor.api.isAuthenticated() ? (
+          <>
+            {this.props.isPublishedScene && <PublishButton onClick={this.props.onOpenScene}>Open Scene</PublishButton>}
+            {!this.props.isPublishedScene ? (
+              <PublishButton id="publish-button" onClick={this.props.onPublish}>
+                Publish to Webaverse...
+              </PublishButton>
+            ) : (
+              <PublishButton id="publish-button" onClick={this.props.onPublish}>
+                Save Scene
+              </PublishButton>
+            )}
+          </>
+        ) : (
+          <PublishButton onClick={() => this.onLogin()}>Login</PublishButton>
+        )}
         <ContextMenu id="menu">
           {this.props.menu.map(menu => {
             return this.renderMenu(menu);

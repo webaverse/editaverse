@@ -1,5 +1,5 @@
 import { createGlobalStyle } from "styled-components";
-
+import theme from "./theme";
 const GlobalStyle = createGlobalStyle`
   /*! minireset.css v0.0.4 | MIT License | github.com/jgthms/minireset.css */
   html,
@@ -168,6 +168,19 @@ const GlobalStyle = createGlobalStyle`
       display: none;
     }
   }
+
+  ::-webkit-scrollbar {
+    width: 1em;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: ${theme.darkGrey};
+    outline: 1px solid ${theme.slateGrey};
+}
+
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgb(0 0 0 / 30%);
+}
 `;
 
 export default GlobalStyle;

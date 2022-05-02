@@ -9,9 +9,6 @@ import { Button } from "../inputs/Button";
 import LoginDialog from "../../api/LoginDialog";
 import { DialogContext } from "../contexts/DialogContext";
 
-
-
-
 const AssetsPanelContainer = styled(Row)`
   position: relative;
   flex: 1;
@@ -62,17 +59,17 @@ export const AssetPanelContentContainer = styled(Row)`
 `;
 
 const LoginContainer = styled.div`
-   margin: auto;
-   width: 20%
-`
+  margin: auto;
+  width: 20%;
+`;
 
 const LoginButton = styled(Button)`
   padding: 0 2em;
-`
+`;
 
 function getSources(editor) {
   // const isAuthenticated = editor.api.isAuthenticated();
-  return editor.sources
+  return editor.sources;
   // .filter(source => !source.requiresAuthentication || isAuthenticated);
 }
 
@@ -122,7 +119,7 @@ export default function AssetsPanel() {
     state => {
       setSavedSourceState({
         ...savedSourceState,
-        [selectedSource.id]: state
+        [selectedSource?.id]: state
       });
     },
     [selectedSource, setSavedSourceState, savedSourceState]
@@ -140,9 +137,9 @@ export default function AssetsPanel() {
       hideDialog();
       return null;
     }
-  }
+  };
 
-  const savedState = savedSourceState[selectedSource.id] || {};
+  const savedState = savedSourceState[selectedSource?.id] || {};
   return (
     <AssetsPanelContainer id="assets-panel">
       <AssetsPanelColumn flex>
@@ -156,17 +153,19 @@ export default function AssetsPanel() {
         </List>
       </AssetsPanelColumn>
       <Column flex>
-        {(SourceComponent && (!selectedSource.requiresAuthentication || isAuthenticated)) ? (
+        {SourceComponent && (!selectedSource.requiresAuthentication || isAuthenticated) ? (
           <SourceComponent
-            key={selectedSource.id}
+            key={selectedSource?.id}
             source={selectedSource}
             editor={editor}
             savedState={savedState}
             setSavedState={setSavedState}
           />
-        ) :
-          <LoginContainer><LoginButton onClick={() => onLogin()}> Login</LoginButton></LoginContainer>
-        }
+        ) : (
+          <LoginContainer>
+            <LoginButton onClick={() => onLogin()}> Login</LoginButton>
+          </LoginContainer>
+        )}
       </Column>
       <AssetDropZone />
     </AssetsPanelContainer>

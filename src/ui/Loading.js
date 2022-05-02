@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import SpokeLogo from "./SpokeLogo";
 
 const StyledLoading = styled.div`
   display: flex;
@@ -24,10 +23,6 @@ export default class Loading extends Component {
   };
 
   render() {
-    return (
-      <StyledLoading fullScreen={this.props.fullScreen}>
-        {this.props.message}
-      </StyledLoading>
-    );
+    return <StyledLoading fullScreen={this.props.fullScreen}>{this.props.message}</StyledLoading>;
   }
 }

@@ -31,7 +31,6 @@ export function useLoadAsync(callback, initialResults = [], initialCursor = 0) {
       setIsLoading(true);
       setHasMore(false);
       setError(undefined);
-
       if (cursor === 0) {
         setResults([]);
       }

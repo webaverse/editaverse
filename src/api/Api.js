@@ -138,10 +138,14 @@ export default class Project extends EventEmitter {
 
   isAuthenticated() {
     const value = localStorage.getItem(LOCAL_STORE_KEY);
-    const store = JSON.parse(value);
-    const connectedAddress = window.ethereum ? window.ethereum.selectedAddress : null;
-    // return !!(store && store.credentials && store.credentials.token);
-    return !!(connectedAddress || store);
+    try {
+      const store = JSON.parse(value);
+      const connectedAddress = window.ethereum ? window.ethereum.selectedAddress : null;
+      // return !!(store && store.credentials && store.credentials.token);
+      return !!(connectedAddress || store);
+    } catch (e) {
+      return false;
+    }
   }
 
   getToken() {
@@ -633,12 +637,15 @@ export default class Project extends EventEmitter {
   }
 
   validURL(str) {
-    var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-      '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-      '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+    const pattern = new RegExp(
+      "^(https?:\\/\\/)?" + // protocol
+      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+      "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+        "(\\#[-a-z\\d_]*)?$",
+      "i"
+    ); // fragment locator
     return !!pattern.test(str);
   }
 
@@ -653,8 +660,8 @@ export default class Project extends EventEmitter {
 
     const json = await response.json();
 
-    let modifiedJson = json.scenes[0];
-    for (let fields in modifiedJson) {
+    const modifiedJson = json.scenes[0];
+    for (const fields in modifiedJson) {
       if (modifiedJson[fields] && this.validURL(modifiedJson[fields])) {
         modifiedJson[fields] = "https://cors.editaverse.com/" + modifiedJson[fields];
       }
@@ -1206,15 +1213,16 @@ export default class Project extends EventEmitter {
     const value = localStorage.getItem(LOCAL_STORE_KEY);
 
     if (!value) {
-      console.error("Not authenticated")
+      console.error("Not authenticated");
     }
-
-    const store = JSON.parse(value);
-
-    if (!store) {
-      console.error("Not authenticated")
+    try {
+      const store = JSON.parse(value);
+      if (!store) {
+        console.error("Not authenticated");
+      }
+      return store;
+    } catch (e) {
+      console.error("Not authenticated");
     }
-
-    return store;
   }
 }

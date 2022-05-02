@@ -1,4 +1,3 @@
-import spokeIcon from "./assets/spoke-icon.png";
 import editorIcon from "./assets/editor-icon.png";
 
 // Read configs from meta tags if available, otherwise use the process.env injected from build.
@@ -12,6 +11,7 @@ const get = (configs, key, defaultValue) => {
   }
 };
 
+get(configs, "SERVER_URL", process.env.SERVER_URL);
 get(configs, "HUBS_SERVER", process.env.HUBS_SERVER);
 get(configs, "RETICULUM_SERVER", process.env.RETICULUM_SERVER);
 get(configs, "THUMBNAIL_SERVER", process.env.THUMBNAIL_SERVER);
@@ -23,7 +23,7 @@ get(configs, "BASE_ASSETS_PATH", process.env.BASE_ASSETS_PATH);
 get(configs, "DISCORD_CLIENT_ID", process.env.DISCORD_CLIENT_ID);
 get(configs, "DISCORD_CLIENT_SECRET", process.env.DISCORD_CLIENT_SECRET);
 get(configs, "DISCORD_REDIRECT", process.env.DISCORD_REDIRECT);
-get(configs, "DISCORD_AUTHORIZATION_URL", process.env.DISCORD_AUTHORIZATION_URL)
+get(configs, "DISCORD_AUTHORIZATION_URL", process.env.DISCORD_AUTHORIZATION_URL);
 
 if (configs.BASE_ASSETS_PATH) {
   // eslint-disable-next-line no-undef
