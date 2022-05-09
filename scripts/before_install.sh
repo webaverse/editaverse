@@ -9,7 +9,7 @@ nvm install --lts
 npm install pm2 -g
 
 #create our working directory if it doesnt exist
-DIR="/home/ec2-user/editaverse"
+DIR="/home/ubuntu/editaverse"
 if [ -d "$DIR" ]; then
   echo "${DIR} exists"
 else
