@@ -1,9 +1,8 @@
 #!/bin/bash
 
-#download node and npm
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-. ~/.nvm/nvm.sh
-nvm install --lts
+#download node and NPM LTS
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+sudo apt-get install -y nodejs
 
 #install PM2
 npm install pm2 -g
