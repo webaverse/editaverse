@@ -11,4 +11,5 @@ cd /home/ubuntu/editaverse
 npm install
 
 #start our node app in the background using PM2
-pm2 --name editaverse start "npm run dev"
+#pm2 --name editaverse start "npm run dev"
+pm2 restart editaverse

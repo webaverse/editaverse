@@ -90,7 +90,7 @@ const NavBar = props => {
         <NavList>
           {auth ? (
             <>
-              <li>{auth.username && auth.username}</li>
+              <li>{auth.username ? auth.username : auth.address ? auth.address : auth.addr}</li>
               <li>
                 <a href="#" onClick={() => logout()}>
                   Logout

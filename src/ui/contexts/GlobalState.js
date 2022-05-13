@@ -2,8 +2,12 @@ import React, { createContext, useReducer } from "react";
 import AppReducer from "./AppReducer";
 import axios from "axios";
 import configs from "../../configs";
+
+//import { MetamaskManager, ProfileManager, DiscordManager } from "webaverse-blockchain-lib/dist"
+
 const LOCAL_STORE_KEY = "___hubs_store";
 const LOCAL_ACCESS_TOKEN = "access_token";
+const E_MAIL_ADDRESS = "email_address";
 
 export const getAuth = () => {
   const value = localStorage.getItem(LOCAL_STORE_KEY);
@@ -26,7 +30,8 @@ export const getAuth = () => {
 
 //Initial state
 const initialState = {
-  auth: getAuth()
+  auth: getAuth(),
+  resEmail: ""
 };
 
 //Create context
@@ -71,6 +76,7 @@ export const GlobalProvider = ({ children }) => {
   //Actions
   const authAction = {
     auth: state.auth,
+    resEmail: state.resEmail,
     metaMaskLogin: async () => {
       if (typeof window !== "undefined" && window.ethereum) {
         const [address] = await window.ethereum.request({
@@ -115,6 +121,26 @@ export const GlobalProvider = ({ children }) => {
         });
       }
     },
+    /* getInfo: async (code) => {
+       try {
+         const discord = new DiscordManager();
+         const user = await discord.login(code);
+         console.log(user)
+         localStorage.setItem(LOCAL_ACCESS_TOKEN, JSON.stringify(user.accessToken))
+         localStorage.setItem(LOCAL_STORE_KEY, JSON.stringify(user.data));
+         dispatch({
+           type: "USER_LOGIN",
+           payload: user.data
+         })
+       } catch (error) {
+         console.error(error);
+         dispatch({
+           type: "LOGIN_ERROR",
+           payload: null
+         })
+       }
+ 
+     },*/
     logout: () => {
       localStorage.removeItem(LOCAL_STORE_KEY);
       localStorage.removeItem(LOCAL_ACCESS_TOKEN);
@@ -122,6 +148,33 @@ export const GlobalProvider = ({ children }) => {
         type: "LOGOUT_USER",
         payload: null
       });
+    },
+    loginWithEmail: async email => {
+      try {
+        localStorage.setItem(E_MAIL_ADDRESS, JSON.stringify(email));
+        const res = await axios.post(`${configs.SERVER_URL}/login?email=${email}`);
+        dispatch({
+          type: "LOGIN_WITH_EMAIL",
+          payload: res.status
+        });
+        console.log(res.status);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    confirmLogin: async (email, code) => {
+      try {
+        const data = email ? email : localStorage.getItem(E_MAIL_ADDRESS);
+        const res = await axios.post(`${configs.SERVER_URL}/login?email=${data}&code=${code}`);
+        localStorage.setItem(LOCAL_STORE_KEY, JSON.stringify({ address: res.data.addr }));
+        localStorage.setItem(LOCAL_ACCESS_TOKEN, JSON.stringify(res.data.token));
+        dispatch({
+          type: "LOGIN_WITH_E_MAIL",
+          payload: res.data
+        });
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 

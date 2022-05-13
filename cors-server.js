@@ -9,7 +9,7 @@ const host = process.env.CORS_HOST || "0.0.0.0";
 const port = process.env.CORS_PORT || 8080;
 const port2 = process.env.CORS_PORT_TWO || 8081;
 
-const key = fs.readFileSync(path.join(__dirname, "certs", "key.pem"));
+const key = fs.readFileSync(path.join(__dirname, "certs", "privkey.pem"));
 const cert = fs.readFileSync(path.join(__dirname, "certs", "cert.pem"));
 
 cors_proxy2

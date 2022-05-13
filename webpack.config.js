@@ -23,7 +23,7 @@ const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPl
 function createHTTPSConfig() {
   // Generate certs for the local webpack-dev-server.
   if (fs.existsSync(path.join(__dirname, "certs"))) {
-    const key = fs.readFileSync(path.join(__dirname, "certs", "key.pem"));
+    const key = fs.readFileSync(path.join(__dirname, "certs", "privkey.pem"));
     const cert = fs.readFileSync(path.join(__dirname, "certs", "cert.pem"));
 
     return { key, cert };
@@ -54,7 +54,7 @@ function createHTTPSConfig() {
 
     fs.mkdirSync(path.join(__dirname, "certs"));
     fs.writeFileSync(path.join(__dirname, "certs", "cert.pem"), pems.cert);
-    fs.writeFileSync(path.join(__dirname, "certs", "key.pem"), pems.private);
+    fs.writeFileSync(path.join(__dirname, "certs", "privkey.pem"), pems.private);
 
     return {
       key: pems.private,
@@ -73,6 +73,11 @@ module.exports = env => {
       entry: ["./src/index.js"]
     },
 
+    resolve: {
+      alias: {
+        "webaverse-blockchain-lib": path.resolve(__dirname, "./webaverse-blockchain-lib")
+      }
+    },
     devtool: process.env.NODE_ENV === "production" ? "source-map" : "inline-source-map",
 
     devServer: {
