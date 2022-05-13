@@ -81,6 +81,8 @@ module.exports = env => {
     devtool: process.env.NODE_ENV === "production" ? "source-map" : "inline-source-map",
 
     devServer: {
+      compress: true,
+      disableHostCheck: true,
       https: createHTTPSConfig(),
       historyApiFallback: true,
       port,
