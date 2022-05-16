@@ -23,7 +23,7 @@ const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPl
 function createHTTPSConfig() {
   // Generate certs for the local webpack-dev-server.
   if (fs.existsSync(path.join(__dirname, "certs"))) {
-    const key = fs.readFileSync(path.join(__dirname, "certs", "key.pem"));
+    const key = fs.readFileSync(path.join(__dirname, "certs", "privkey.pem"));
     const cert = fs.readFileSync(path.join(__dirname, "certs", "cert.pem"));
 
     return { key, cert };
@@ -54,7 +54,7 @@ function createHTTPSConfig() {
 
     fs.mkdirSync(path.join(__dirname, "certs"));
     fs.writeFileSync(path.join(__dirname, "certs", "cert.pem"), pems.cert);
-    fs.writeFileSync(path.join(__dirname, "certs", "key.pem"), pems.private);
+    fs.writeFileSync(path.join(__dirname, "certs", "privkey.pem"), pems.private);
 
     return {
       key: pems.private,
@@ -75,12 +75,14 @@ module.exports = env => {
 
     resolve: {
       alias: {
-        'webaverse-blockchain-lib': path.resolve(__dirname, './webaverse-blockchain-lib')
+        "webaverse-blockchain-lib": path.resolve(__dirname, "./webaverse-blockchain-lib")
       }
     },
     devtool: process.env.NODE_ENV === "production" ? "source-map" : "inline-source-map",
 
     devServer: {
+      compress: true,
+      disableHostCheck: true,
       https: createHTTPSConfig(),
       historyApiFallback: true,
       port,
@@ -92,7 +94,7 @@ module.exports = env => {
       headers: {
         "Access-Control-Allow-Origin": "*"
       },
-      before: function (app) {
+      before: function(app) {
         // be flexible with people accessing via a local reticulum on another port
         app.use(cors({ origin: /hubs\.local(:\d*)?$/ }));
       }
@@ -248,6 +250,7 @@ module.exports = env => {
         faviconPath: (process.env.BASE_ASSETS_PATH || "/") + "assets/images/favicon.ico"
       }),
       new webpack.EnvironmentPlugin({
+        SERVER_URL: "",
         BUILD_VERSION: "dev",
         NODE_ENV: "development",
         RETICULUM_SERVER: undefined,

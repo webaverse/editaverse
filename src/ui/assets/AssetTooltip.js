@@ -5,7 +5,6 @@ import styled from "styled-components";
 const TooltipContainer = styled.div`
   display: flex;
   width: 600px;
-  padding: 12px 0;
 `;
 
 const TooltipThumbnailContainer = styled.div`

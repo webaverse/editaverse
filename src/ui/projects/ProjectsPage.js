@@ -1,7 +1,4 @@
 import React, { useContext, useEffect } from "react";
-import PropTypes from "prop-types";
-import configs from "../../configs";
-import { withApi } from "../contexts/ApiContext";
 import NavBar from "../navigation/NavBar";
 import {
   ProjectGrid,
@@ -19,9 +16,8 @@ import { connectMenu, ContextMenu, MenuItem } from "../layout/ContextMenu";
 import templates from "./templates";
 import styled from "styled-components";
 import { withRouter } from "react-router-dom";
-import { GlobalContext } from "../contexts/GlobalState"
+import { GlobalContext } from "../contexts/GlobalState";
 import { ApiContext } from "../contexts/ApiContext";
-
 
 export const ProjectsSection = styled.section`
   padding-bottom: 100px;
@@ -75,8 +71,8 @@ export const ProjectsHeader = styled.div`
 
 const contextMenuId = "project-menu";
 
-const ProjectsPage = (props) => {
-  const { auth, getInfo } = useContext(GlobalContext)
+const ProjectsPage = props => {
+  const { auth, loginWithDiscord } = useContext(GlobalContext);
   const api = useContext(ApiContext);
   const isAuthenticated = api.isAuthenticated();
   const urlSearchParams = new URLSearchParams(window.location.search);
@@ -87,15 +83,13 @@ const ProjectsPage = (props) => {
     loading: isAuthenticated,
     isAuthenticated,
     error: null,
-    user: user,
+    user: user
   });
-
-  console.log(auth)
 
   useEffect(() => {
     // We dont need to load projects if the user isn't logged in
     if (state.isAuthenticated) {
-      api
+      /* api
         .getProjects()
         .then(projects => {
           setState({
@@ -111,25 +105,27 @@ const ProjectsPage = (props) => {
           if (error.response && error.response.status === 401) {
             // User has an invalid auth token. Prompt them to login again.
             api.logout();
+            // eslint-disable-next-line react/prop-types
             return props.history.push("/login", { from: "/projects" });
           }
 
-          setState({ error, loading: false });
-        });
+          
+        });*/
+      setState({ projects: [], loading: false });
     }
 
-    if (params.code && !state.isAuthenticated) {
-      const user = async () => await getInfo(params.code);
+    if (params.code && !auth) {
+      const user = async () => await loginWithDiscord(params.code);
       user();
     }
-  }, [isAuthenticated, params])
+  }, [isAuthenticated, params]);
 
   useEffect(() => {
     if (auth) {
-      props.history.push("/projects")
+      // eslint-disable-next-line react/prop-types
+      props.history.push("/projects");
     }
-  }, [auth])
-
+  }, [auth]);
 
   const onDeleteProject = project => {
     api
@@ -141,13 +137,19 @@ const ProjectsPage = (props) => {
   const renderContextMenu = props => {
     return (
       <ContextMenu id={contextMenuId}>
-        <MenuItem onClick={e => onDeleteProject(props.trigger.project, e)}>Delete Project</MenuItem>
+        <MenuItem
+          onClick={e => {
+            // eslint-disable-next-line react/prop-types
+            onDeleteProject(props.trigger.project, e);
+          }}
+        >
+          Delete Project
+        </MenuItem>
       </ContextMenu>
     );
   };
 
   const ProjectContextMenu = connectMenu(contextMenuId)(renderContextMenu);
-
 
   const { error, loading, projects } = state;
 
@@ -209,6 +211,6 @@ const ProjectsPage = (props) => {
       </main>
     </>
   );
-}
+};
 
 export default withRouter(ProjectsPage);

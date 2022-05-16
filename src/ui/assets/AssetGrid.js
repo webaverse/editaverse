@@ -14,7 +14,7 @@ import { OnboardingContext } from "../contexts/OnboardingContext";
 import { ItemTypes } from "../dnd";
 import AudioPreview from "./AudioPreview";
 import Tooltip, { TooltipContainer } from "../layout/Tooltip";
-
+import Loader from "./Loader";
 const AssetGridTooltipContainer = styled(TooltipContainer)`
   max-width: initial;
   text-align: left;
@@ -95,6 +95,7 @@ const LoadingItem = styled.div`
   justify-content: center;
   align-items: center;
   user-select: none;
+  padding-bottom: 10px;
 `;
 
 AssetGridItem.propTypes = {
@@ -191,7 +192,12 @@ export default function AssetGrid({ isLoading, selectedItems, items, onSelect, o
                 onClick={onSelect}
               />
             ))}
-            {isLoading && <LoadingItem>Loading...</LoadingItem>}
+            {isLoading && (
+              <LoadingItem>
+                <Loader size={50}></Loader>
+                Loading...
+              </LoadingItem>
+            )}
           </MediaGrid>
         </InfiniteScroll>
       </VerticalScrollContainer>

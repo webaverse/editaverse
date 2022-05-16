@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 import { withApi } from "../ui/contexts/ApiContext";
 import { trackEvent } from "../telemetry";
 
-import AuthEmailSentMessage from "./AuthEmailSentMessage";
-import AuthForm from "./AuthForm";
-import Login from "../ui/auth/Login"
+//import AuthEmailSentMessage from "./AuthEmailSentMessage";
+//import AuthForm from "./AuthForm";
+import Login from "../ui/auth/Login";
 
 class AuthContainer extends Component {
   static propTypes = {
@@ -91,7 +91,7 @@ class AuthContainer extends Component {
     // }
 
     // return <AuthForm error={this.state.error} onSubmit={this.onSubmit} />;
-    return <Login />
+    return <Login />;
   }
 }
 

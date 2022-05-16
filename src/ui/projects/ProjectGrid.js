@@ -6,7 +6,7 @@ import { Row } from "../layout/Flex";
 import StringInput from "../inputs/StringInput";
 import { Link } from "react-router-dom";
 import { Plus } from "styled-icons/fa-solid/Plus";
-
+import Loader from "../assets/Loader";
 const ProjectGridItemContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -24,10 +24,14 @@ const ProjectGridItemContainer = styled.div`
   }
 
   svg {
-    width: 3em;
+    8width: 3em;
     height: 3em;
     margin-bottom: 20px;
   }
+`;
+
+const LoadingMessage = styled.h3`
+  margin-bottom: 10px;
 `;
 
 export function NewProjectGridItem({ path, label }) {
@@ -51,7 +55,8 @@ NewProjectGridItem.defaultProps = {
 export function LoadingProjectGridItem() {
   return (
     <ProjectGridItemContainer>
-      <h3>Loading...</h3>
+      <Loader size={50}></Loader>
+      <LoadingMessage>Loading...</LoadingMessage>
     </ProjectGridItemContainer>
   );
 }

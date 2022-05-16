@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import configs from "../../configs";
 import OnboardingContainer from "./OnboardingContainer";
 import OnboardingDialog from "./OnboardingDialog";
 import OnboardingPopover from "./OnboardingPopover";

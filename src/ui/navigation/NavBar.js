@@ -1,10 +1,9 @@
-import React, { Component, useContext } from "react";
+import React, { useContext } from "react";
 import configs from "../../configs";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { withApi } from "../contexts/ApiContext";
-import { GlobalContext } from "../contexts/GlobalState"
-
+import { GlobalContext } from "../contexts/GlobalState";
 
 const StyledNavBar = styled.header`
   position: relative;
@@ -58,14 +57,13 @@ const RightContainer = styled.div`
   }
 `;
 
-const NavBar = (props) => {
-  const { auth, logout } = useContext(GlobalContext)
-
+const NavBar = props => {
+  const { auth, logout } = useContext(GlobalContext);
 
   React.useEffect(() => {
-    console.log(props.api.isAuthenticated())
-  }, [])
-
+    // eslint-disable-next-line react/prop-types
+    console.log(props.api.isAuthenticated());
+  }, []);
 
   return (
     <StyledNavBar>
@@ -92,23 +90,22 @@ const NavBar = (props) => {
         <NavList>
           {auth ? (
             <>
+              <li>{auth.username ? auth.username : auth.address ? auth.address : auth.addr}</li>
               <li>
-                {(auth.username) ? auth.username : (auth.address ? auth.address : auth.addr)}
-              </li>
-              <li>
-                <a href="#" onClick={() => logout()}>Logout</a>
+                <a href="#" onClick={() => logout()}>
+                  Logout
+                </a>
               </li>
             </>
           ) : (
             <li>
               <a href="/login">Login</a>
             </li>
-          )
-          }
+          )}
         </NavList>
       </RightContainer>
     </StyledNavBar>
   );
-}
+};
 
-export default withApi(NavBar)
+export default withApi(NavBar);

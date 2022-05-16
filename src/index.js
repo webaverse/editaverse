@@ -1,5 +1,5 @@
 import configs from "./configs";
-import ReactDOM from "react-dom";
+import ReactDom from "react-dom/client";
 import React from "react";
 import * as Sentry from "@sentry/browser";
 import "abortcontroller-polyfill/dist/polyfill-patch-fetch";
@@ -23,5 +23,7 @@ initTelemetry();
 console.info(`Spoke version: ${process.env.BUILD_VERSION}`);
 
 const api = new Api();
+const container = document.getElementById("app");
+const root = ReactDom.createRoot(container);
 
-ReactDOM.render(<App api={api} />, document.getElementById("app"));
+root.render(<App api={api} />);

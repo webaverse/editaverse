@@ -58,11 +58,11 @@ export const proxiedUrlFor = url => {
     return url;
   }
 
-  return `https://${configs.CORS_PROXY_SERVER}/${url}`;
+  return `${configs.CORS_PROXY_SERVER}/${url}`;
 };
 
 export const scaledThumbnailUrlFor = (url, width, height) => {
-  return `https://${configs.THUMBNAIL_SERVER}/thumbnail/${farsparkEncodeUrl(url)}?w=${width}&h=${height}`;
+  return `${configs.THUMBNAIL_SERVER}/thumbnail/${farsparkEncodeUrl(url)}?w=${width}&h=${height}`;
 };
 
 const CommonKnownContentTypes = {
@@ -91,7 +91,7 @@ export default class Project extends EventEmitter {
     const { protocol, host } = new URL(window.location.href);
 
     this.serverURL = protocol + "//" + host;
-    this.apiURL = `https://${RETICULUM_SERVER}`;
+    this.apiURL = `${RETICULUM_SERVER}`;
 
     this.projectDirectoryPath = "/api/files/";
 
@@ -138,10 +138,14 @@ export default class Project extends EventEmitter {
 
   isAuthenticated() {
     const value = localStorage.getItem(LOCAL_STORE_KEY);
-    const store = JSON.parse(value);
-    const connectedAddress = window.ethereum ? window.ethereum.selectedAddress : null;
-    // return !!(store && store.credentials && store.credentials.token);
-    return !!(connectedAddress || store);
+    try {
+      const store = JSON.parse(value);
+      //const connectedAddress = window.ethereum ? window.ethereum.selectedAddress : null;
+      // return !!(store && store.credentials && store.credentials.token);
+      return !!store; //!!(connectedAddress || store);
+    } catch (e) {
+      return false;
+    }
   }
 
   getToken() {
@@ -189,7 +193,7 @@ export default class Project extends EventEmitter {
       authorization: `Bearer ${token}`
     };
 
-    const response = await this.fetch(`https://${RETICULUM_SERVER}/api/v1/projects`, { headers });
+    const response = await this.fetch(`${RETICULUM_SERVER}/api/v1/projects`, { headers });
 
     const json = await response.json();
 
@@ -208,7 +212,7 @@ export default class Project extends EventEmitter {
       authorization: `Bearer ${token}`
     };
 
-    const response = await this.fetch(`https://${RETICULUM_SERVER}/api/v1/projects/${projectId}`, {
+    const response = await this.fetch(`${RETICULUM_SERVER}/api/v1/projects/${projectId}`, {
       headers
     });
 
@@ -225,7 +229,7 @@ export default class Project extends EventEmitter {
     const cacheKey = `${url}|${index}`;
     if (resolveUrlCache.has(cacheKey)) return resolveUrlCache.get(cacheKey);
 
-    const request = this.fetch(`https://${RETICULUM_SERVER}/api/v1/media`, {
+    const request = this.fetch(`${RETICULUM_SERVER}/api/v1/media`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ media: { url, index } })
@@ -319,7 +323,7 @@ export default class Project extends EventEmitter {
 
   unproxyUrl(baseUrl, url) {
     if (configs.CORS_PROXY_SERVER) {
-      const corsProxyPrefix = `https://${configs.CORS_PROXY_SERVER}/`;
+      const corsProxyPrefix = `${configs.CORS_PROXY_SERVER}/`;
 
       if (baseUrl.startsWith(corsProxyPrefix)) {
         baseUrl = baseUrl.substring(corsProxyPrefix.length);
@@ -340,7 +344,7 @@ export default class Project extends EventEmitter {
   }
 
   async searchMedia(source, params, cursor, signal) {
-    const url = new URL(`https://${RETICULUM_SERVER}/api/v1/media/search`);
+    const url = new URL(`${RETICULUM_SERVER}/api/v1/media/search`);
 
     const headers = {
       "content-type": "application/json"
@@ -467,7 +471,7 @@ export default class Project extends EventEmitter {
 
     const body = JSON.stringify({ project });
 
-    const projectEndpoint = `https://${RETICULUM_SERVER}/api/v1/projects`;
+    const projectEndpoint = `${RETICULUM_SERVER}/api/v1/projects`;
 
     const resp = await this.fetch(projectEndpoint, { method: "POST", headers, body, signal });
 
@@ -516,7 +520,7 @@ export default class Project extends EventEmitter {
       authorization: `Bearer ${token}`
     };
 
-    const projectEndpoint = `https://${RETICULUM_SERVER}/api/v1/projects/${projectId}`;
+    const projectEndpoint = `${RETICULUM_SERVER}/api/v1/projects/${projectId}`;
 
     const resp = await this.fetch(projectEndpoint, { method: "DELETE", headers });
 
@@ -598,7 +602,7 @@ export default class Project extends EventEmitter {
       project
     });
 
-    const projectEndpoint = `https://${RETICULUM_SERVER}/api/v1/projects/${projectId}`;
+    const projectEndpoint = `${RETICULUM_SERVER}/api/v1/projects/${projectId}`;
 
     const resp = await this.fetch(projectEndpoint, { method: "PATCH", headers, body, signal });
 
@@ -633,12 +637,15 @@ export default class Project extends EventEmitter {
   }
 
   validURL(str) {
-    var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-      '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-      '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+    const pattern = new RegExp(
+      "^(https?:\\/\\/)?" + // protocol
+      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+      "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+        "(\\#[-a-z\\d_]*)?$",
+      "i"
+    ); // fragment locator
     return !!pattern.test(str);
   }
 
@@ -647,14 +654,14 @@ export default class Project extends EventEmitter {
       "content-type": "application/json"
     };
 
-    const response = await this.fetch(`https://${RETICULUM_SERVER}/api/v1/scenes/${sceneId}`, {
+    const response = await this.fetch(`${RETICULUM_SERVER}/api/v1/scenes/${sceneId}`, {
       headers
     });
 
     const json = await response.json();
 
-    let modifiedJson = json.scenes[0];
-    for (let fields in modifiedJson) {
+    const modifiedJson = json.scenes[0];
+    for (const fields in modifiedJson) {
       if (modifiedJson[fields] && this.validURL(modifiedJson[fields])) {
         modifiedJson[fields] = "https://cors.editaverse.com/" + modifiedJson[fields];
       }
@@ -664,10 +671,10 @@ export default class Project extends EventEmitter {
   }
 
   getSceneUrl(sceneId) {
-    if (configs.HUBS_SERVER === "localhost:8080") {
-      return `https://${configs.HUBS_SERVER}/scene.html?scene_id=${sceneId}`;
+    if (configs.HUBS_SERVER === "http://localhost:8080" || configs.HUBS_SERVER === "https://localhost:8080") {
+      return `${configs.HUBS_SERVER}/scene.html?scene_id=${sceneId}`;
     } else {
-      return `https://${configs.HUBS_SERVER}/scenes/${sceneId}`;
+      return `${configs.HUBS_SERVER}/scenes/${sceneId}`;
     }
   }
 
@@ -910,7 +917,7 @@ export default class Project extends EventEmitter {
       };
       const body = JSON.stringify({ scene: sceneParams });
 
-      const resp = await this.fetch(`https://${RETICULUM_SERVER}/api/v1/projects/${project.project_id}/publish`, {
+      const resp = await this.fetch(`${RETICULUM_SERVER}/api/v1/projects/${project.project_id}/publish`, {
         method: "POST",
         headers,
         body
@@ -962,8 +969,8 @@ export default class Project extends EventEmitter {
   }
 
   async upload(blob, onUploadProgress, signal) {
-    const { phx_host: uploadHost } = await (await this.fetch(`https://${RETICULUM_SERVER}/api/v1/meta`)).json();
-    const uploadPort = new URL(`https://${RETICULUM_SERVER}`).port;
+    const { phx_host: uploadHost } = await (await this.fetch(`${RETICULUM_SERVER}/api/v1/meta`)).json();
+    const uploadPort = new URL(`${RETICULUM_SERVER}`).port;
 
     return await new Promise((resolve, reject) => {
       const request = new XMLHttpRequest();
@@ -1016,7 +1023,7 @@ export default class Project extends EventEmitter {
   }
 
   uploadAssets(editor, files, onProgress, signal) {
-    return this._uploadAssets(`https://${RETICULUM_SERVER}/api/v1/assets`, editor, files, onProgress, signal);
+    return this._uploadAssets(`${RETICULUM_SERVER}/api/v1/assets`, editor, files, onProgress, signal);
   }
 
   async _uploadAssets(endpoint, editor, files, onProgress, signal) {
@@ -1051,12 +1058,12 @@ export default class Project extends EventEmitter {
   }
 
   uploadAsset(editor, file, onProgress, signal) {
-    return this._uploadAsset(`https://${RETICULUM_SERVER}/api/v1/assets`, editor, file, onProgress, signal);
+    return this._uploadAsset(`${RETICULUM_SERVER}/api/v1/assets`, editor, file, onProgress, signal);
   }
 
   uploadProjectAsset(editor, projectId, file, onProgress, signal) {
     return this._uploadAsset(
-      `https://${RETICULUM_SERVER}/api/v1/projects/${projectId}/assets`,
+      `${RETICULUM_SERVER}/api/v1/projects/${projectId}/assets`,
       editor,
       file,
       onProgress,
@@ -1135,7 +1142,7 @@ export default class Project extends EventEmitter {
       authorization: `Bearer ${token}`
     };
 
-    const assetEndpoint = `https://${RETICULUM_SERVER}/api/v1/assets/${assetId}`;
+    const assetEndpoint = `${RETICULUM_SERVER}/api/v1/assets/${assetId}`;
 
     const resp = await this.fetch(assetEndpoint, { method: "DELETE", headers });
 
@@ -1158,7 +1165,7 @@ export default class Project extends EventEmitter {
       authorization: `Bearer ${token}`
     };
 
-    const projectAssetEndpoint = `https://${RETICULUM_SERVER}/api/v1/projects/${projectId}/assets/${assetId}`;
+    const projectAssetEndpoint = `${RETICULUM_SERVER}/api/v1/projects/${projectId}/assets/${assetId}`;
 
     const resp = await this.fetch(projectAssetEndpoint, { method: "DELETE", headers });
 
@@ -1206,15 +1213,16 @@ export default class Project extends EventEmitter {
     const value = localStorage.getItem(LOCAL_STORE_KEY);
 
     if (!value) {
-      console.error("Not authenticated")
+      console.error("Not authenticated");
     }
-
-    const store = JSON.parse(value);
-
-    if (!store) {
-      console.error("Not authenticated")
+    try {
+      const store = JSON.parse(value);
+      if (!store) {
+        console.error("Not authenticated");
+      }
+      return store;
+    } catch (e) {
+      console.error("Not authenticated");
     }
-
-    return store;
   }
 }
