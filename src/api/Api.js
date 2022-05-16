@@ -140,9 +140,9 @@ export default class Project extends EventEmitter {
     const value = localStorage.getItem(LOCAL_STORE_KEY);
     try {
       const store = JSON.parse(value);
-      const connectedAddress = window.ethereum ? window.ethereum.selectedAddress : null;
+      //const connectedAddress = window.ethereum ? window.ethereum.selectedAddress : null;
       // return !!(store && store.credentials && store.credentials.token);
-      return !!(connectedAddress || store);
+      return !!store; //!!(connectedAddress || store);
     } catch (e) {
       return false;
     }
@@ -643,7 +643,7 @@ export default class Project extends EventEmitter {
       "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
       "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
       "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
-      "(\\#[-a-z\\d_]*)?$",
+        "(\\#[-a-z\\d_]*)?$",
       "i"
     ); // fragment locator
     return !!pattern.test(str);
