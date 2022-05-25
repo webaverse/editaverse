@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import Dialog from "../ui/dialogs/Dialog";
-import AuthContainer from "./AuthContainer";
+import Login from "../ui/auth/Login";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -38,7 +38,7 @@ export default class LoginDialog extends Component {
     return (
       <Dialog {...props} tag="div" onCancel={this.state.showCancel ? onCancel : null}>
         <Container>
-          <AuthContainer onSuccess={onSuccess} onChange={this.onChange} />
+          <Login />
         </Container>
       </Dialog>
     );

@@ -1,7 +1,4 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import configs from "../../configs";
-import { withApi } from "../contexts/ApiContext";
+import React, { useContext, useEffect } from "react";
 import NavBar from "../navigation/NavBar";
 import {
   ProjectGrid,
@@ -18,6 +15,9 @@ import LatestUpdate from "../whats-new/LatestUpdate";
 import { connectMenu, ContextMenu, MenuItem } from "../layout/ContextMenu";
 import templates from "./templates";
 import styled from "styled-components";
+import { withRouter } from "react-router-dom";
+import { GlobalContext } from "../contexts/GlobalState";
+import { ApiContext } from "../contexts/ApiContext";
 
 export const ProjectsSection = styled.section`
   padding-bottom: 100px;
@@ -71,32 +71,28 @@ export const ProjectsHeader = styled.div`
 
 const contextMenuId = "project-menu";
 
-class ProjectsPage extends Component {
-  static propTypes = {
-    api: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired
-  };
+const ProjectsPage = props => {
+  const { auth, loginWithDiscord } = useContext(GlobalContext);
+  const api = useContext(ApiContext);
+  const isAuthenticated = api.isAuthenticated();
+  const urlSearchParams = new URLSearchParams(window.location.search);
+  const params = Object.fromEntries(urlSearchParams.entries());
+  const user = api.getAuth();
+  const [state, setState] = React.useState({
+    projects: [],
+    loading: isAuthenticated,
+    isAuthenticated,
+    error: null,
+    user: user
+  });
 
-  constructor(props) {
-    super(props);
-
-    const isAuthenticated = this.props.api.isAuthenticated();
-
-    this.state = {
-      projects: [],
-      loading: isAuthenticated,
-      isAuthenticated,
-      error: null
-    };
-  }
-
-  componentDidMount() {
+  useEffect(() => {
     // We dont need to load projects if the user isn't logged in
-    if (this.state.isAuthenticated) {
-      this.props.api
+    if (state.isAuthenticated) {
+      /* api
         .getProjects()
         .then(projects => {
-          this.setState({
+          setState({
             projects: projects.map(project => ({
               ...project,
               url: `/projects/${project.project_id}`
@@ -106,99 +102,115 @@ class ProjectsPage extends Component {
         })
         .catch(error => {
           console.error(error);
-
           if (error.response && error.response.status === 401) {
             // User has an invalid auth token. Prompt them to login again.
-            this.props.api.logout();
-            return this.props.history.push("/login", { from: "/projects" });
+            api.logout();
+            // eslint-disable-next-line react/prop-types
+            return props.history.push("/login", { from: "/projects" });
           }
 
-          this.setState({ error, loading: false });
-        });
+          
+        });*/
+      setState({ projects: [], loading: false });
     }
-  }
 
-  onDeleteProject = project => {
-    this.props.api
+    if (params.code && !auth) {
+      const user = async () => await loginWithDiscord(params.code);
+      user();
+    }
+  }, [isAuthenticated, params]);
+
+  useEffect(() => {
+    if (auth) {
+      // eslint-disable-next-line react/prop-types
+      props.history.push("/projects");
+    }
+  }, [auth]);
+
+  const onDeleteProject = project => {
+    api
       .deleteProject(project.project_id)
-      .then(() => this.setState({ projects: this.state.projects.filter(p => p.project_id !== project.project_id) }))
+      .then(() => setState({ projects: state.projects.filter(p => p.project_id !== project.project_id) }))
       .catch(error => this.setState({ error }));
   };
 
-  renderContextMenu = props => {
+  const renderContextMenu = props => {
     return (
       <ContextMenu id={contextMenuId}>
-        <MenuItem onClick={e => this.onDeleteProject(props.trigger.project, e)}>Delete Project</MenuItem>
+        <MenuItem
+          onClick={e => {
+            // eslint-disable-next-line react/prop-types
+            onDeleteProject(props.trigger.project, e);
+          }}
+        >
+          Delete Project
+        </MenuItem>
       </ContextMenu>
     );
   };
 
-  ProjectContextMenu = connectMenu(contextMenuId)(this.renderContextMenu);
+  const ProjectContextMenu = connectMenu(contextMenuId)(renderContextMenu);
 
-  render() {
-    const { error, loading, projects, isAuthenticated } = this.state;
+  const { error, loading, projects } = state;
 
-    const ProjectContextMenu = this.ProjectContextMenu;
+  const topTemplates = [];
 
-    const topTemplates = [];
-
-    for (let i = 0; i < templates.length && i < 4; i++) {
-      topTemplates.push(templates[i]);
-    }
-
-    return (
-      <>
-        <NavBar />
-        <main>
-          {!isAuthenticated || (projects.length === 0 && !loading) ? (
-            <ProjectsSection flex={0}>
-              <WelcomeContainer>
-                <h1>Welcome</h1>
-                <h2>
-                  If you&#39;re new here we recommend going through the tutorial. Otherwise, jump right in and create a
-                  project from scratch or from one of our templates.
-                </h2>
-                <MediumButton as={Link} to="/projects/tutorial">
-                  Start Tutorial
-                </MediumButton>
-              </WelcomeContainer>
-            </ProjectsSection>
-          ) : (
-            <LatestUpdate />
-          )}
-          <ProjectsSection>
-            <ProjectsContainer>
-              <ProjectsHeader>
-                <h1>Projects</h1>
-              </ProjectsHeader>
-              <ProjectGridContainer>
-                <ProjectGridHeader>
-                  <ProjectGridHeaderRow></ProjectGridHeaderRow>
-                  <ProjectGridHeaderRow>
-                    <Button as={Link} to="/projects/create">
-                      New Project
-                    </Button>
-                  </ProjectGridHeaderRow>
-                </ProjectGridHeader>
-                <ProjectGridContent>
-                  {error && <ErrorMessage>{error.message}</ErrorMessage>}
-                  {!error && (
-                    <ProjectGrid
-                      loading={loading}
-                      projects={projects}
-                      newProjectPath="/projects/templates"
-                      contextMenuId={contextMenuId}
-                    />
-                  )}
-                </ProjectGridContent>
-              </ProjectGridContainer>
-            </ProjectsContainer>
-          </ProjectsSection>
-          <ProjectContextMenu />
-        </main>
-      </>
-    );
+  for (let i = 0; i < templates.length && i < 4; i++) {
+    topTemplates.push(templates[i]);
   }
-}
 
-export default withApi(ProjectsPage);
+  return (
+    <>
+      <NavBar />
+      <main>
+        {!isAuthenticated || (projects && !loading) ? (
+          <ProjectsSection flex={0}>
+            <WelcomeContainer>
+              <h1>Welcome</h1>
+              <h2>
+                If you&#39;re new here we recommend going through the tutorial. Otherwise, jump right in and create a
+                project from scratch or from one of our templates.
+              </h2>
+              <MediumButton as={Link} to="/projects/tutorial">
+                Start Tutorial
+              </MediumButton>
+            </WelcomeContainer>
+          </ProjectsSection>
+        ) : (
+          <LatestUpdate />
+        )}
+        <ProjectsSection>
+          <ProjectsContainer>
+            <ProjectsHeader>
+              <h1>Projects</h1>
+            </ProjectsHeader>
+            <ProjectGridContainer>
+              <ProjectGridHeader>
+                <ProjectGridHeaderRow></ProjectGridHeaderRow>
+                <ProjectGridHeaderRow>
+                  <Button as={Link} to="/projects/create">
+                    New Project
+                  </Button>
+                </ProjectGridHeaderRow>
+              </ProjectGridHeader>
+              <ProjectGridContent>
+                {error && <ErrorMessage>{error.message}</ErrorMessage>}
+                {!error && (
+                  <ProjectGrid
+                    loading={loading}
+                    projects={projects}
+                    newProjectPath="/projects/templates"
+                    contextMenuId={contextMenuId}
+                  />
+                )}
+              </ProjectGridContent>
+            </ProjectGridContainer>
+          </ProjectsContainer>
+        </ProjectsSection>
+        <ProjectContextMenu />
+      </main>
+    </>
+  );
+};
+
+export default withRouter(ProjectsPage);

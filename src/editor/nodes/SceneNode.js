@@ -9,6 +9,13 @@ import serializeColor from "../utils/serializeColor";
 import { DistanceModelType } from "../objects/AudioSource";
 import traverseFilteredSubtrees from "../utils/traverseFilteredSubtrees";
 
+//To Kebab case
+const toKebabCase = str =>
+  str &&
+  str
+    .match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
+    .map(x => x.toLowerCase())
+    .join("-");
 // Migrate v1 spoke scene to v2
 function migrateV1ToV2(json) {
   const { root, metadata, entities } = json;
@@ -193,6 +200,300 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
   }
 
   static async loadProject(editor, json) {
+    if (!json.version) {
+      json = migrateV1ToV2(json);
+    }
+
+    if (json.version === 2) {
+      json = migrateV2ToV3(json);
+    }
+
+    if (json.version === 3) {
+      json = migrateV3ToV4(json);
+    }
+
+    if (json.version === 4) {
+      json = migrateV4ToV5(json);
+    }
+
+    const { root, metadata, entities } = json;
+
+    let scene = null;
+
+    const dependencies = [];
+
+    function loadAsync(promise) {
+      dependencies.push(promise);
+    }
+
+    const errors = [];
+
+    function onError(object, error) {
+      errors.push(error);
+    }
+
+    const sortedEntities = sortEntities(entities);
+
+    for (const entityId of sortedEntities) {
+      const entity = entities[entityId];
+
+      let EntityNodeConstructor;
+
+      for (const NodeConstructor of editor.nodeTypes) {
+        if (NodeConstructor.shouldDeserialize(entity)) {
+          EntityNodeConstructor = NodeConstructor;
+          break;
+        }
+      }
+
+      if (!EntityNodeConstructor) {
+        throw new Error(`No node constructor found for entity "${entity.name}"`);
+      }
+
+      const node = await EntityNodeConstructor.deserialize(editor, entity, loadAsync, onError);
+      node.uuid = entityId;
+
+      if (entity.parent) {
+        const parent = getNodeWithUUID(scene, entity.parent);
+
+        if (!parent) {
+          throw new Error(
+            `Node "${entity.name}" with uuid "${entity.uuid}" specifies parent "${entity.parent}", but was not found.`
+          );
+        }
+
+        parent.children.splice(entity.index, 0, node);
+        node.parent = parent;
+      } else if (entityId === root) {
+        scene = node;
+        scene.metadata = metadata;
+        // Needed so that editor.scene is set correctly when used in nodes deserialize methods.
+        editor.scene = scene;
+      } else {
+        throw new Error(`Node "${entity.name}" with uuid "${entity.uuid}" does not specify a parent.`);
+      }
+
+      node.onChange();
+    }
+
+    await Promise.all(dependencies);
+
+    return [scene, errors];
+  }
+
+  static scnToSpokeJson(json) {
+    const { name, root, skyboxId, components } = json.objects[0].content;
+    const secureName = name ? name : "Imported";
+    const secureRoot = root ? root : _Math.generateUUID();
+    const secureSkyBoxId = skyboxId ? skyboxId : _Math.generateUUID();
+    const object = {
+      version: 5,
+      root: secureRoot,
+      metadata: { name: secureName },
+      entities: {
+        [secureRoot]: {
+          name: secureName
+        },
+        [secureSkyBoxId]: {
+          name: "Skybox",
+          components: [
+            {
+              name: "transform",
+              props: {
+                position: {
+                  x: 0,
+                  y: 0,
+                  z: 0
+                },
+                rotation: {
+                  x: 0,
+                  y: 0,
+                  z: 0
+                },
+                scale: {
+                  x: 1,
+                  y: 1,
+                  z: 1
+                }
+              }
+            },
+            {
+              name: "visible",
+              props: {
+                visible: true
+              }
+            },
+            {
+              name: "editor-settings",
+              props: {
+                enabled: true
+              }
+            },
+            {
+              name: "skybox",
+              props: {
+                turbidity: 6.09,
+                rayleigh: 0.82,
+                luminance: 1.055,
+                mieCoefficient: 0.043,
+                mieDirectionalG: 0.8,
+                inclination: 0.10471975511965978,
+                azimuth: 0.2333333333333333,
+                distance: 8000
+              }
+            }
+          ],
+          parent: secureRoot,
+          index: 0
+        }
+      }
+    };
+
+    if (components) {
+      const tempFogEntity = {
+        [root]: { name, components: [...components] }
+      };
+
+      object.entities = { ...tempFogEntity, ...object.entities };
+    }
+
+    json.objects.forEach((item, index) => {
+      let tmpEntity;
+      const itemUuid = item?.content?.uuid ? item.content.uuid : _Math.generateUUID();
+      if (itemUuid && item.type === "application/light") {
+        const itemName = item?.content?.name ? item.content.name : `${item.content.lightType}-light`;
+        tmpEntity = {
+          [itemUuid]: {
+            name: itemName,
+            components: [
+              {
+                name: "transform",
+                props: {
+                  position: {
+                    x: item?.content?.position ? item.content.position[0] : 0,
+                    y: item?.content?.position ? item.content.position[1] : 0,
+                    z: item?.content?.position ? item.content.position[2] : 0
+                  },
+                  rotation: {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                  },
+                  scale: {
+                    x: 1,
+                    y: 1,
+                    z: 1
+                  }
+                }
+              },
+              {
+                name: "visible",
+                props: {
+                  visible: true
+                }
+              },
+              {
+                name: "editor-settings",
+                props: {
+                  enabled: true
+                }
+              },
+              {
+                name: toKebabCase(itemName),
+                props: {
+                  color: item.color ? item.color : "#ffffff",
+                  intensity: 1,
+                  range: 0,
+                  castShadow: true,
+                  shadowMapResolution: [512, 512],
+                  shadowBias: 0,
+                  shadowRadius: 1
+                }
+              }
+            ],
+            parent: secureRoot,
+            index: index
+          }
+        };
+      } else if (itemUuid && item.type !== "application/spawnpoint" && item.type !== "application/rendersettings") {
+        const itemName = item?.content?.name ? item.content.name : `gltf-model`;
+        tmpEntity = {
+          [itemUuid]: {
+            name: itemName,
+            components: [
+              {
+                name: "transform",
+                props: {
+                  position: {
+                    x: item.position ? item.position[0] : 0,
+                    y: item.position ? item.position[1] : 0,
+                    z: item.position ? item.position[2] : 0
+                  },
+                  rotation: {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                  },
+                  scale: {
+                    x: 1,
+                    y: 1,
+                    z: 1
+                  }
+                }
+              },
+              {
+                name: "visible",
+                props: {
+                  visible: true
+                }
+              },
+              {
+                name: "editor-settings",
+                props: {
+                  enabled: true
+                }
+              },
+              {
+                name: "gltf-model",
+                props: {
+                  // src: item.start_url.replace("http://localhost:8081/", ""),
+                  src: item.start_url,
+                  attribution: null
+                }
+              },
+              {
+                name: "shadow",
+                props: {
+                  cast: false,
+                  receive: true
+                }
+              },
+              {
+                name: "collidable",
+                props: {}
+              },
+              {
+                name: "walkable",
+                props: {}
+              },
+              {
+                name: "combine",
+                props: {}
+              }
+            ],
+            parent: secureRoot,
+            index: index
+          }
+        };
+      }
+      object.entities = { ...object.entities, ...tmpEntity };
+    });
+
+    return object;
+  }
+
+  static async loadProjectScn(editor, scnjson) {
+    let json = SceneNode.scnToSpokeJson(scnjson);
     if (!json.version) {
       json = migrateV1ToV2(json);
     }
@@ -517,31 +818,97 @@ export default class SceneNode extends EditorNodeMixin(Scene) {
     return sceneJson;
   }
 
-  //pankaj
   serializeScn() {
     const sceneJson = {
-      objects: []
+      objects: [
+        {
+          position: [0, 0, 0],
+          content: {
+            root: this.uuid,
+            name: this.name,
+            skyboxId: "",
+            components: [
+              {
+                name: "fog",
+                props: {
+                  type: this.fogType,
+                  color: serializeColor(this.fogColor),
+                  near: this.fogNearDistance,
+                  far: this.fogFarDistance,
+                  density: this.fogDensity
+                }
+              },
+              {
+                name: "background",
+                props: {
+                  color: serializeColor(this.background)
+                }
+              },
+              {
+                name: "audio-settings",
+                props: {
+                  overrideAudioSettings: this.overrideAudioSettings,
+                  avatarDistanceModel: this.avatarDistanceModel,
+                  avatarRolloffFactor: this.avatarRolloffFactor,
+                  avatarRefDistance: this.avatarRefDistance,
+                  avatarMaxDistance: this.avatarMaxDistance,
+                  mediaVolume: this.mediaVolume,
+                  mediaDistanceModel: this.mediaDistanceModel,
+                  mediaRolloffFactor: this.mediaRolloffFactor,
+                  mediaRefDistance: this.mediaRefDistance,
+                  mediaMaxDistance: this.mediaMaxDistance,
+                  mediaConeInnerAngle: this.mediaConeInnerAngle,
+                  mediaConeOuterAngle: this.mediaConeOuterAngle,
+                  mediaConeOuterGain: this.mediaConeOuterGain
+                }
+              }
+            ]
+          }
+        }
+      ]
     };
 
     for (const sibling of this.children) {
-      if (sibling.type === "Model") {
+      if (sibling.name === "Skybox") {
+        sceneJson.objects[0].content.skyboxId = sibling.uuid;
+      } else if (sibling.type === "Model") {
         const object = {
           position: [sibling.position.x, sibling.position.y, sibling.position.z],
           physics: sibling.collidable,
           quaternion: [sibling.quaternion._x, sibling.quaternion._y, sibling.quaternion._z, sibling.quaternion._w],
-          start_url: sibling._canonicalUrl,
-          dynamic: true
+          start_url: `${sibling._canonicalUrl}`,
+          dynamic: true,
+          content: {
+            name: sibling.name,
+            uuid: sibling.uuid
+          }
         };
         sceneJson.objects.push(object);
       } else if (sibling.type.includes("Light")) {
-        const object = {
-          type: "application/light",
-          content: {
-            lightType: sibling.name.split(" ")[0].toLowerCase(),
-            args: [[255, 255, 255], 5],
-            position: [sibling.position.x, sibling.position.y, sibling.position.z]
-          }
-        };
+        let object;
+        if (sibling.type === "HemisphereLight") {
+          object = {
+            type: "application/light",
+            content: {
+              lightType: sibling.name.split(" ")[0].toLowerCase(),
+              args: [[255, 255, 255], 0.5],
+              name: sibling.name,
+              uuid: sibling.uuid
+            }
+          };
+        } else {
+          object = {
+            type: "application/light",
+            content: {
+              lightType: sibling.name.split(" ")[0].toLowerCase(),
+              args: [[255, 255, 255], 5],
+              name: sibling.name,
+              position: [sibling.position.x, sibling.position.y, sibling.position.z],
+              color: sibling.color,
+              uuid: sibling.uuid
+            }
+          };
+        }
         sceneJson.objects.push(object);
       }
     }

@@ -11,16 +11,15 @@ const LoginSection = styled.section`
 const LoginContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 60px;
+  padding: 40px;
   margin: 0 auto;
-  max-width: 480px;
+  max-width: 600px;
   background: ${props => props.theme.panel};
   border-radius: 8px;
 `;
 
 export default function LoginPage() {
   const api = useContext(ApiContext);
-
   if (api.isAuthenticated()) {
     return <Redirect to="/projects" />;
   }

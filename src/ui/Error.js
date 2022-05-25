@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import SpokeLogo from "./SpokeLogo";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
@@ -27,8 +26,7 @@ export default class Error extends Component {
   render() {
     return (
       <StyledError>
-        <Link to="/">
-        </Link>
+        <Link to="/"></Link>
         {this.props.message}
       </StyledError>
     );

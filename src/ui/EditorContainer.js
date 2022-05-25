@@ -22,7 +22,7 @@ import ErrorDialog from "./dialogs/ErrorDialog";
 import ExportProjectDialog from "./dialogs/ExportProjectDialog";
 import ProgressDialog from "./dialogs/ProgressDialog";
 import SaveNewProjectDialog from "./dialogs/SaveNewProjectDialog";
-import DragLayer from "./dnd/DragLayer";
+// import DragLayer from "./dnd/DragLayer";
 import HierarchyPanelContainer from "./hierarchy/HierarchyPanelContainer";
 import { Resizeable } from "./layout/Resizeable";
 import Onboarding from "./onboarding/Onboarding";
@@ -224,7 +224,7 @@ class EditorContainer extends Component {
     }
   }
 
-  async importProject(projectFile) {
+  async importProject(projectFile, isScn = false) {
     const project = this.state.project;
 
     this.setState({
@@ -244,7 +244,7 @@ class EditorContainer extends Component {
     try {
       await editor.init();
 
-      await editor.loadProject(projectFile);
+      await editor.loadProject(projectFile, isScn);
 
       editor.sceneModified = true;
       this.updateModifiedState();
@@ -826,14 +826,13 @@ class EditorContainer extends Component {
         const fileReader = new FileReader();
         fileReader.onload = () => {
           const json = JSON.parse(fileReader.result);
-          console.log(json);
 
           if (json.metadata) {
             delete json.metadata.sceneUrl;
             delete json.metadata.sceneId;
           }
 
-          this.importProject(json);
+          this.importProject(json, true);
         };
         fileReader.readAsText(el.files[0]);
       }
@@ -971,7 +970,7 @@ class EditorContainer extends Component {
             <DialogContextProvider value={this.dialogContext}>
               <OnboardingContextProvider value={onboardingContext}>
                 <DndProvider backend={HTML5Backend}>
-                  <DragLayer />
+                  {/* <DragLayer /> */}
                   <ToolBar
                     menu={toolbarMenu}
                     editor={editor}
